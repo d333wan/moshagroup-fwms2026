@@ -121,6 +121,67 @@ function LandingPage() {
         </div>
       </section>
 
+      <section
+        id="download"
+        className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8"
+      >
+        <div className="grid items-center gap-10 rounded-3xl border bg-card p-6 sm:p-10 lg:grid-cols-2">
+          <div>
+            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
+              <Smartphone className="h-3.5 w-3.5" />
+              Android Tersedia
+            </span>
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Aplikasi Petugas Lapangan untuk Android
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              Foto ber-watermark otomatis (tanggal, jam, koordinat GPS), update
+              progres, dan lapor tugas langsung dari lapangan. Bekerja online
+              atau offline.
+            </p>
+            <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                Kamera + galeri dengan watermark otomatis
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                Status ketersediaan &amp; peta lokasi tugas
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                Notifikasi real-time penugasan baru
+              </li>
+            </ul>
+            <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+              <Button asChild size="lg">
+                <a href="/downloads/fwms-petugas.apk" download>
+                  <Download className="mr-2 h-4 w-4" />
+                  Download APK Android
+                </a>
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                APK ± 15 MB · Android 8.0+
+              </span>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Setelah mengunduh, izinkan &ldquo;Install dari sumber tidak
+              dikenal&rdquo; pada perangkat Anda.
+            </p>
+          </div>
+          <div className="flex justify-center">
+            <img
+              src={androidPhone}
+              alt="Preview aplikasi FWMS Petugas di Android"
+              width={900}
+              height={1200}
+              loading="lazy"
+              className="max-h-[520px] w-auto drop-shadow-2xl"
+            />
+          </div>
+        </div>
+      </section>
+
     </PublicLayout>
   );
 }
