@@ -18,9 +18,12 @@ interface AuthContextValue {
   loading: boolean;
   hasRole: (role: AppRole) => boolean;
   hasAnyRole: (roles: AppRole[]) => boolean;
+  isSuperAdmin: boolean;
   isAdmin: boolean;
+  isAdminTier: boolean;
   isManager: boolean;
   isPetugas: boolean;
+  isGuest: boolean;
   refreshRoles: () => Promise<void>;
   signOut: () => Promise<void>;
 }
