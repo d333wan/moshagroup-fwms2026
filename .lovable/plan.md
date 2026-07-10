@@ -1,113 +1,87 @@
 
-# Phase 2 — Autentikasi & RBAC
+# Strategi: Lovable Cloud (dev) → Supabase Eksternal (prod)
 
-Fokus turn ini: fondasi keamanan sebelum modul Tasks/Petugas/Laporan.
-Metode login: **email + password** (Google/Apple bisa ditambah nanti — Supabase eksternal, aktifkan sendiri di dashboard).
-
-## 1. Skema database (Supabase eksternal)
-
-Karena project ini pakai Supabase eksternal Anda (`pkxnbazymwetrtckgikg`), saya tidak bisa menjalankan migration otomatis. Saya akan menyiapkan **file SQL** siap-paste yang berisi:
-
-- `enum app_role`: `admin`, `manager`, `petugas`, `viewer`
-- Tabel `public.profiles` — 1:1 ke `auth.users`
-  - kolom: `id (uuid PK, FK auth.users on delete cascade)`, `full_name`, `phone`, `avatar_url`, `created_at`, `updated_at`
-  - RLS: user baca/update profil sendiri; admin baca semua
-- Tabel `public.user_roles` — banyak peran per user
-  - kolom: `id`, `user_id`, `role app_role`, unique `(user_id, role)`
-  - RLS: user baca peran sendiri; hanya admin insert/update/delete
-- Function `public.has_role(_user_id uuid, _role app_role)` — `security definer`, dipakai semua policy (hindari rekursi RLS)
-- Function `public.get_user_roles(_user_id uuid)` — kembalikan array peran
-- Trigger `on_auth_user_created` → auto-insert row `profiles` + default role `viewer` untuk user baru
-- Trigger `handle_updated_at` untuk kolom `updated_at`
-- Semua `GRANT` yang perlu (`authenticated`, `service_role`)
-
-Anda tinggal paste 1x di **Supabase Dashboard → SQL Editor**. Saya sertakan tombol/link + instruksi di chat.
-
-## 2. Klien & tipe
-
-- Regenerate `src/integrations/supabase/types.ts` (saya buatkan versi manual berdasarkan skema di atas — bisa Anda replace via `supabase gen types` kalau mau)
-- Update `src/integrations/supabase/client.ts` supaya typed: `SupabaseClient<Database>`
-
-## 3. Halaman auth (publik)
-
-- `src/routes/auth.tsx` — tab **Sign In** & **Sign Up**
-  - Sign up: email, password, full_name → `supabase.auth.signUp({ emailRedirectTo: window.location.origin })`
-  - Sign in: email + password
-  - Link "Lupa password?" → panggil `resetPasswordForEmail` dengan `redirectTo: origin + '/reset-password'`
-  - Redirect ke `search.redirect ?? '/dashboard'` setelah berhasil
-  - Kalau sudah login → auto redirect keluar dari `/auth`
-- `src/routes/reset-password.tsx` — publik, form password baru, panggil `supabase.auth.updateUser({ password })`
-
-## 4. Auth context & guard
-
-- `src/hooks/use-auth.tsx` — `AuthProvider` + `useAuth()`
-  - State: `user`, `session`, `roles: app_role[]`, `loading`
-  - Pakai `onAuthStateChange` (filter `SIGNED_IN`/`SIGNED_OUT`/`USER_UPDATED`) + initial `getSession`
-  - Load roles via `get_user_roles` RPC saat session berubah
-  - Helper: `hasRole(role)`, `hasAnyRole(roles[])`, `isAdmin`, `isManager`, `isPetugas`
-  - `signOut()` → cancel queries, clear cache, `supabase.auth.signOut()`, navigate ke `/auth`
-- Mount `AuthProvider` di `__root.tsx` (di dalam `QueryClientProvider`)
-- Root: pasang **satu** listener `onAuthStateChange` → `router.invalidate()` + `queryClient.invalidateQueries()` (skip pada SIGNED_OUT)
-
-## 5. Route guard: `_authenticated` layout
-
-- Pindah `dashboard.*` → `src/routes/_authenticated/dashboard.tsx` + `_authenticated/dashboard.index.tsx`
-- Buat `src/routes/_authenticated/route.tsx`:
-  - `ssr: false`
-  - `beforeLoad`: cek `supabase.auth.getUser()`; kalau null → `redirect({ to: '/auth', search: { redirect: location.href } })`
-  - component: `<Outlet />`
-- (Opsional siap-pakai) `src/routes/_authenticated/_admin/route.tsx` — gate `hasRole('admin')` untuk section admin nanti
-
-## 6. Header & UX
-
-- Update `src/components/layout/app-header.tsx`:
-  - Tampilkan avatar + nama user + badge peran (dari `useAuth`)
-  - Dropdown: Profile, Sign out
-- Update `src/layouts/public-layout.tsx` header:
-  - Kalau belum login: tombol **Sign in** → `/auth`
-  - Kalau sudah login: tombol **Dashboard** + avatar menu
-- Landing (`index.tsx`): tombol "Masuk ke Dashboard" tetap; kalau belum login akan auto-redirect ke `/auth`
-
-## 7. Verifikasi
-
-- `bunx tsc --noEmit`
-- Playwright screenshot: buka `/dashboard` tanpa login → harus mendarat di `/auth?redirect=...`
-- (Kalau SQL sudah dijalankan) test signup + login manual via preview
+Tujuan: mempercepat iterasi Phase 2 (Auth + RBAC) dengan Lovable Cloud yang otomatis provisioning, lalu pindah ke project Supabase eksternal Anda (`pkxnbazymwetrtckgikg`) saat siap rilis.
 
 ---
 
-## Detail teknis singkat
+## Bagian A — Aktifkan Lovable Cloud (sekarang)
 
-**Struktur file baru/berubah:**
-```
-src/
-  routes/
-    auth.tsx                              (new)
-    reset-password.tsx                    (new)
-    _authenticated/
-      route.tsx                           (new, gate)
-      dashboard.tsx                       (moved)
-      dashboard.index.tsx                 (moved)
-  hooks/
-    use-auth.tsx                          (new)
-  integrations/supabase/
-    types.ts                              (new, manual)
-    client.ts                             (typed)
-  components/layout/app-header.tsx        (edit: user menu)
-  layouts/public-layout.tsx               (edit: signin/dashboard cta)
-  routes/__root.tsx                       (edit: AuthProvider + listener)
+1. **Enable Lovable Cloud** via tool `supabase--enable`.
+   - Otomatis buat project Supabase baru khusus dev + inject `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` baru ke `.env`.
+   - Tidak menghapus kredensial eksternal Anda — kita simpan dulu di file lain (lihat langkah 2).
 
-supabase/migrations/
-  2026xxxx_phase2_auth_rbac.sql           (new, Anda paste manual)
-```
+2. **Backup kredensial eksternal** ke `.env.external` (tidak dipakai runtime, hanya arsip):
+   ```
+   EXTERNAL_SUPABASE_URL=https://pkxnbazymwetrtckgikg.supabase.co
+   EXTERNAL_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOi...Dx1fU
+   ```
+   Ini supaya nanti tinggal copy-paste balik.
 
-**Yang TIDAK dilakukan sekarang** (masuk phase berikutnya):
-- CRUD Tasks / Petugas / Laporan lapangan / GPS check-in
-- Halaman admin manage users & assign roles (butuh phase 3)
-- Custom email templates (Supabase default cukup dulu)
-- Social login (Google/Apple) — bisa ditambah kapan saja setelah Anda enable provider di dashboard
+3. **Jalankan migration Phase 2** (`db/phase2_auth_rbac.sql`) di Lovable Cloud.
+   - Karena Cloud terintegrasi, saya bisa jalankan SQL otomatis lewat tool migration (tidak perlu paste manual).
+   - Skema: `app_role` enum, `profiles`, `user_roles`, `has_role`, `get_user_roles`, trigger auto-create profile + default role `viewer`, RLS policies, semua GRANT.
 
-**Yang perlu Anda lakukan** setelah saya build:
-1. Paste isi `supabase/migrations/2026xxxx_phase2_auth_rbac.sql` ke SQL Editor Supabase → Run
-2. Signup akun pertama, lalu jalankan `INSERT INTO user_roles (user_id, role) VALUES ('<id-anda>', 'admin');` untuk jadi admin (saya sertakan snippet-nya di chat)
-3. Set **Site URL** di Supabase Auth settings ke URL preview Lovable
+4. **Seed admin pertama** — setelah Anda signup via `/auth`, saya siapkan tombol/SQL snippet untuk promote akun pertama jadi `admin`.
+
+5. **Kode aplikasi tidak berubah.** `src/integrations/supabase/client.ts` sudah baca `import.meta.env.VITE_SUPABASE_*` — otomatis pakai kredensial Cloud yang baru.
+
+---
+
+## Bagian B — Selama development
+
+- Semua signup, login, role assignment, dan data uji hidup di Lovable Cloud.
+- Bebas reset/rebuild skema kapan saja tanpa mengganggu project eksternal.
+- Lanjut Phase 3+ (Tasks, Petugas, Laporan) di atas Cloud.
+
+---
+
+## Bagian C — Migrasi balik ke Supabase eksternal (saat siap production)
+
+Ketika Anda bilang "siap pindah ke eksternal", saya akan:
+
+1. **Export skema + data dari Lovable Cloud**
+   - Skema: kumpulkan semua migration SQL yang sudah dijalankan → 1 file `db/production_schema.sql`.
+   - Data (opsional): export tabel `profiles`, `user_roles`, dsb. lewat SQL Editor / `pg_dump`.
+
+2. **Apply ke project Supabase eksternal Anda**
+   - Anda paste `db/production_schema.sql` di SQL Editor project `pkxnbazymwetrtckgikg`.
+   - (Opsional) restore data seed.
+
+3. **Swap kredensial di `.env`**
+   ```
+   VITE_SUPABASE_URL=https://pkxnbazymwetrtckgikg.supabase.co
+   VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOi...Dx1fU   # dari .env.external
+   ```
+   Hapus/comment variabel Cloud.
+
+4. **Disable Lovable Cloud** (opsional) supaya tidak ada dua backend aktif.
+
+5. **Set Site URL** di Supabase Dashboard eksternal → URL published Lovable Anda.
+
+6. **Test end-to-end**: signup baru, login, cek role guard `/dashboard`.
+
+---
+
+## Yang berubah / tidak berubah
+
+| Area | Bagian A (Cloud) | Bagian C (Eksternal) |
+| --- | --- | --- |
+| `.env` VITE_SUPABASE_* | Cloud otomatis inject | Manual swap balik |
+| `client.ts` | Tidak berubah | Tidak berubah |
+| Skema DB | Auto-migrate | Paste SQL manual |
+| Auth flow / RBAC code | Sama | Sama |
+
+---
+
+## Konfirmasi sebelum saya lanjut
+
+Kalau Anda oke, saya akan:
+1. Enable Lovable Cloud
+2. Backup kredensial eksternal ke `.env.external`
+3. Jalankan migration Phase 2 di Cloud
+4. Kasih instruksi signup + promote admin
+
+**Catatan penting**: data yang Anda buat di Lovable Cloud selama dev **tidak otomatis** pindah ke Supabase eksternal — hanya skema. Kalau butuh migrasi data juga, sebut saat kita sampai Bagian C.
+
+Setuju lanjut?
