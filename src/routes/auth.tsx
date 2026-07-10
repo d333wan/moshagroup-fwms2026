@@ -200,9 +200,8 @@ function SignUpForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="signup-password">Password</Label>
-        <Input
+        <PasswordInput
           id="signup-password"
-          type="password"
           required
           minLength={8}
           value={password}
