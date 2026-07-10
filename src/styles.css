@@ -60,39 +60,39 @@
 :root {
   --radius: 0.875rem; /* 14px */
 
-  /* Page canvas (slate-100 #F5F7FA-ish) */
-  --background: oklch(0.975 0.006 250);
+  /* Page canvas — cooler, deeper slate (~#EEF2F7) so cards clearly float */
+  --background: oklch(0.955 0.012 250);
   /* Text: slate-900 #0F172A */
-  --foreground: oklch(0.22 0.04 258);
+  --foreground: oklch(0.21 0.04 258);
 
-  /* Elevated surfaces: pure white */
+  /* Elevated surfaces: pure white cards */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.04 258);
+  --card-foreground: oklch(0.21 0.04 258);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.04 258);
+  --popover-foreground: oklch(0.21 0.04 258);
 
   /* Brand: enterprise blue (~#2563EB) */
   --primary: oklch(0.55 0.20 258);
   --primary-foreground: oklch(1 0 0);
 
   /* Slate-100 chips */
-  --secondary: oklch(0.965 0.01 250);
+  --secondary: oklch(0.955 0.014 252);
   --secondary-foreground: oklch(0.28 0.04 258);
 
-  /* Muted surface + slate-500 text #64748B for secondary labels */
-  --muted: oklch(0.965 0.01 250);
-  --muted-foreground: oklch(0.52 0.028 256);
+  /* Muted surface + slate-600 #475569 for readable secondary labels */
+  --muted: oklch(0.955 0.014 252);
+  --muted-foreground: oklch(0.46 0.03 256);
 
   /* Blue-50 tint for hover/active accents */
-  --accent: oklch(0.955 0.03 258);
-  --accent-foreground: oklch(0.42 0.18 258);
+  --accent: oklch(0.945 0.032 258);
+  --accent-foreground: oklch(0.40 0.18 258);
 
   --destructive: oklch(0.58 0.24 27);
   --destructive-foreground: oklch(1 0 0);
 
-  /* Borders: slate-200 #E2E8F0 */
-  --border: oklch(0.905 0.014 253);
-  --input: oklch(0.905 0.014 253);
+  /* Borders: slate-300 #CBD5E1 — clearly visible frame edges */
+  --border: oklch(0.86 0.018 253);
+  --input: oklch(0.86 0.018 253);
   --ring: oklch(0.55 0.20 258);
 
   --chart-1: oklch(0.55 0.20 258);
@@ -101,16 +101,17 @@
   --chart-4: oklch(0.75 0.19 70);
   --chart-5: oklch(0.65 0.22 30);
 
-  /* Sidebar: slate-50 #F8FAFC — separated from page (#F5F7FA) and card (#FFF) */
-  --sidebar: oklch(0.985 0.005 250);
+  /* Sidebar: crisp white, separated from page by border */
+  --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.28 0.04 258);
   --sidebar-primary: oklch(0.55 0.20 258);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.955 0.03 258);
-  --sidebar-accent-foreground: oklch(0.42 0.18 258);
-  --sidebar-border: oklch(0.905 0.014 253);
+  --sidebar-accent: oklch(0.945 0.032 258);
+  --sidebar-accent-foreground: oklch(0.40 0.18 258);
+  --sidebar-border: oklch(0.86 0.018 253);
   --sidebar-ring: oklch(0.55 0.20 258);
 }
+
 
 .dark {
   /* Page canvas #0F172A (slate-900) */
