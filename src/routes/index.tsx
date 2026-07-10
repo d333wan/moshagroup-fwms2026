@@ -13,6 +13,8 @@ import { PublicLayout } from "@/layouts/public-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import androidPhone from "@/assets/android-phone-mockup.png";
+import heroBg from "@/assets/hero-bg.jpg.asset.json";
+import towerImg from "@/assets/tower.png.asset.json";
 
 
 export const Route = createFileRoute("/")({
@@ -72,36 +74,63 @@ const features = [
 function LandingPage() {
   return (
     <PublicLayout>
-      <section className="mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-
-          <span className="inline-flex items-center rounded-full border border-border bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-            Enterprise · Phase 1 Foundation
-          </span>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Field Work Management System
-          </h1>
-          <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Sistem terpadu untuk mengelola penugasan, pelaporan pekerjaan
-            lapangan, monitoring progres, serta sinkronisasi data secara online
-            dan offline.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link to="/dashboard">
-                Masuk ke Dashboard
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <a href="#download">
-                <Download className="mr-2 h-4 w-4" />
-                Download APK Android
-              </a>
-            </Button>
+      <section
+        className="relative overflow-hidden border-b border-border"
+        style={{
+          backgroundImage: `linear-gradient(rgba(8, 15, 40, 0.78), rgba(8, 15, 40, 0.9)), url(${heroBg.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <img
+          src={towerImg.url}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 hidden h-full w-auto opacity-30 lg:block"
+        />
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-20 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:items-center lg:px-8">
+          <div className="max-w-2xl text-left">
+            <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+              Enterprise · Phase 1 Foundation
+            </span>
+            <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              Field Work Management System
+            </h1>
+            <p className="mt-4 text-base text-slate-200 sm:text-lg">
+              Sistem terpadu untuk mengelola penugasan, pelaporan pekerjaan
+              lapangan, monitoring progres, serta sinkronisasi data secara
+              online dan offline.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg">
+                <Link to="/dashboard">
+                  Masuk ke Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+              >
+                <a href="#download">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download APK Android
+                </a>
+              </Button>
+            </div>
+          </div>
+          <div className="lg:hidden">
+            <img
+              src={towerImg.url}
+              alt="Menara telekomunikasi"
+              className="mx-auto max-h-72 w-auto opacity-80"
+            />
           </div>
         </div>
       </section>
+
 
       <section
         id="modul"
