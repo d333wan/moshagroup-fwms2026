@@ -9,6 +9,7 @@ import {
   Settings,
   ShieldCheck,
   UserCog,
+  HardHat,
 } from "lucide-react";
 import {
   Sidebar,
@@ -31,6 +32,7 @@ const mainNav: NavItem[] = [
 ];
 
 const moduleNav: NavItem[] = [
+  { label: "Dashboard Petugas", to: "/dashboard/my-work", icon: HardHat },
   { label: "Penugasan", to: "/dashboard/tasks", icon: ClipboardList },
   { label: "Petugas Lapangan", to: "/dashboard/officers", icon: Users },
   { label: "Lokasi", to: "/dashboard/locations", icon: MapPin },

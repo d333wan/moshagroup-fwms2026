@@ -1,13 +1,12 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -17,6 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  WatermarkCamera,
+  type WatermarkedFile,
+} from "@/components/field/watermark-camera";
 import { supabase } from "@/integrations/supabase/client";
 import { createReport } from "@/lib/reports.functions";
 import { useAuth } from "@/hooks/use-auth";
@@ -39,8 +42,6 @@ export const Route = createFileRoute(
   component: NewReportPage,
 });
 
-type PendingFile = { file: File; localUrl: string };
-
 function NewReportPage() {
   const { taskId } = Route.useParams();
   const { user, loading } = useAuth();
@@ -48,16 +49,11 @@ function NewReportPage() {
 
   const [reportType, setReportType] = useState("progress");
   const [narrative, setNarrative] = useState("");
-  const [files, setFiles] = useState<PendingFile[]>([]);
-  const [gps, setGps] = useState<{ lat: number; lon: number } | null>(null);
-  const [gpsBusy, setGpsBusy] = useState(false);
-
-  const previews = useMemo(() => files, [files]);
+  const [files, setFiles] = useState<WatermarkedFile[]>([]);
 
   const submit = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Belum login");
-      // Upload all files first
       const uploaded: {
         storage_path: string;
         file_name: string;
@@ -65,7 +61,14 @@ function NewReportPage() {
         size_bytes: number | null;
         kind: "photo" | "document";
       }[] = [];
+      // Use first attached file's GPS as report location if available
+      let reportLat: number | null = null;
+      let reportLon: number | null = null;
       for (const pf of files) {
+        if (reportLat == null && pf.lat != null) {
+          reportLat = pf.lat;
+          reportLon = pf.lon;
+        }
         const ext = pf.file.name.split(".").pop() ?? "bin";
         const path = `${taskId}/${user.id}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
         const { error } = await supabase.storage
@@ -74,7 +77,8 @@ function NewReportPage() {
             contentType: pf.file.type || undefined,
             upsert: false,
           });
-        if (error) throw new Error(`Gagal unggah ${pf.file.name}: ${error.message}`);
+        if (error)
+          throw new Error(`Gagal unggah ${pf.file.name}: ${error.message}`);
         uploaded.push({
           storage_path: path,
           file_name: pf.file.name,
@@ -89,8 +93,8 @@ function NewReportPage() {
           report_type: reportType as any,
           narrative: narrative || null,
           checklist: [],
-          latitude: gps?.lat ?? null,
-          longitude: gps?.lon ?? null,
+          latitude: reportLat,
+          longitude: reportLon,
           attachments: uploaded,
         },
       });
@@ -102,28 +106,11 @@ function NewReportPage() {
     onError: (e: any) => toast.error(e?.message ?? "Gagal kirim laporan"),
   });
 
-  const captureGps = () => {
-    if (!("geolocation" in navigator)) {
-      toast.error("Perangkat tidak mendukung geolokasi");
-      return;
-    }
-    setGpsBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setGps({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        setGpsBusy(false);
-        toast.success("Koordinat GPS diambil");
-      },
-      (err) => {
-        setGpsBusy(false);
-        toast.error(err.message || "Gagal ambil GPS");
-      },
-      { enableHighAccuracy: true, timeout: 10000 },
-    );
-  };
-
   if (loading) return null;
   if (!user) return <Navigate to="/auth" />;
+
+  const officerName =
+    (user.user_metadata?.full_name as string | undefined) ?? user.email ?? null;
 
   return (
     <DashboardLayout
@@ -136,7 +123,7 @@ function NewReportPage() {
     >
       <PageHeader
         title="Buat Laporan Lapangan"
-        description="Kirim update, foto bukti, dan koordinat lokasi."
+        description="Foto otomatis diberi watermark tanggal, jam & koordinat GPS."
         actions={
           <Button
             variant="outline"
@@ -189,86 +176,11 @@ function NewReportPage() {
 
             <div className="grid gap-2">
               <Label>Foto / Lampiran</Label>
-              <div className="rounded-md border border-dashed p-4">
-                <div className="flex items-center gap-3">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border bg-background px-3 py-1.5 text-sm hover:bg-accent">
-                    <Upload className="h-4 w-4" />
-                    Pilih file
-                    <Input
-                      type="file"
-                      multiple
-                      accept="image/*,application/pdf"
-                      className="hidden"
-                      onChange={(e) => {
-                        const list = Array.from(e.target.files ?? []);
-                        setFiles((prev) => [
-                          ...prev,
-                          ...list.map((f) => ({
-                            file: f,
-                            localUrl: URL.createObjectURL(f),
-                          })),
-                        ]);
-                        e.target.value = "";
-                      }}
-                    />
-                  </label>
-                  <span className="text-xs text-muted-foreground">
-                    {files.length} file dipilih
-                  </span>
-                </div>
-                {previews.length > 0 ? (
-                  <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
-                    {previews.map((pf, idx) => (
-                      <div
-                        key={idx}
-                        className="group relative overflow-hidden rounded-md border bg-muted"
-                      >
-                        {pf.file.type.startsWith("image/") ? (
-                          <img
-                            src={pf.localUrl}
-                            alt={pf.file.name}
-                            className="h-24 w-full object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-24 items-center justify-center px-2 text-center text-xs">
-                            {pf.file.name}
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          className="absolute right-1 top-1 rounded-full bg-background/80 p-1 opacity-0 transition group-hover:opacity-100"
-                          onClick={() =>
-                            setFiles((prev) => prev.filter((_, i) => i !== idx))
-                          }
-                          aria-label="Hapus"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Koordinat GPS</Label>
-              <div className="flex items-center gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={captureGps}
-                  disabled={gpsBusy}
-                >
-                  {gpsBusy ? "Mengambil…" : "Ambil GPS"}
-                </Button>
-                <span className="text-sm text-muted-foreground">
-                  {gps
-                    ? `${gps.lat.toFixed(5)}, ${gps.lon.toFixed(5)}`
-                    : "Belum diambil"}
-                </span>
-              </div>
+              <WatermarkCamera
+                officerName={officerName}
+                files={files}
+                onChange={setFiles}
+              />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
