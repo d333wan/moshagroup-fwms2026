@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "FWMS Petugas Lapangan — PT. MOSHA SERI NUSANTARA" },
+      { title: "FWMS - PT. MOSHA SERI NUSANTARA" },
       {
         name: "description",
         content:
@@ -91,8 +91,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "FWMS — PT. MOSHA SERI NUSANTARA" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:title", content: "FWMS Petugas Lapangan — PT. MOSHA SERI NUSANTARA" },
-      { name: "twitter:title", content: "FWMS Petugas Lapangan — PT. MOSHA SERI NUSANTARA" },
+      { property: "og:title", content: "FWMS - PT. MOSHA SERI NUSANTARA" },
+      { name: "twitter:title", content: "FWMS - PT. MOSHA SERI NUSANTARA" },
       { property: "og:description", content: "Kelola penugasan, pelaporan lapangan, monitoring progres, dan sinkronisasi online/offline dalam satu sistem terpadu." },
       { name: "twitter:description", content: "Kelola penugasan, pelaporan lapangan, monitoring progres, dan sinkronisasi online/offline dalam satu sistem terpadu." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4b6d5a70-5580-4eda-a5ec-d4cf9a28269a/id-preview-d3d39920--bd92916e-99b3-4d2b-aeb9-0474b694d4e6.lovable.app-1783705169495.png" },

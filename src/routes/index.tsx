@@ -27,7 +27,7 @@ import heroBg from "@/assets/hero-bg.jpg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FWMS Petugas Lapangan — PT. MOSHA SERI NUSANTARA" },
+      { title: "FWMS - PT. MOSHA SERI NUSANTARA" },
       {
         name: "description",
         content:
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "FWMS Petugas Lapangan — PT. MOSHA SERI NUSANTARA",
+        content: "FWMS - PT. MOSHA SERI NUSANTARA",
       },
       {
         property: "og:description",
