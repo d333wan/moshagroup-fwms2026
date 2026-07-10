@@ -98,13 +98,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Kelola penugasan, pelaporan lapangan, monitoring progres, dan sinkronisasi online/offline dalam satu sistem terpadu." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4b6d5a70-5580-4eda-a5ec-d4cf9a28269a/id-preview-d3d39920--bd92916e-99b3-4d2b-aeb9-0474b694d4e6.lovable.app-1783705169495.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4b6d5a70-5580-4eda-a5ec-d4cf9a28269a/id-preview-d3d39920--bd92916e-99b3-4d2b-aeb9-0474b694d4e6.lovable.app-1783705169495.png" },
+      { name: "theme-color", content: "#B91C1C" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "FWMS" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "icon", type: "image/png", href: COMPANY_LOGO_URL },
+      { rel: "apple-touch-icon", href: "/icons/icon-192.png" },
     ],
     scripts: [
       {
