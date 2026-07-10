@@ -10,12 +10,17 @@ import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/common/empty-state";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 
-export const Route = createFileRoute("/dashboard/")({
+export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
     meta: [
       { title: "Dashboard · FWMS" },
-      { name: "description", content: "Ringkasan operasional Field Work Management System." },
+      {
+        name: "description",
+        content: "Ringkasan operasional Field Work Management System.",
+      },
+      { name: "robots", content: "noindex" },
     ],
   }),
   component: DashboardHome,
@@ -29,14 +34,26 @@ const stats = [
 ];
 
 function DashboardHome() {
+  const { user, roles, isAdmin, isManager } = useAuth();
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined) ??
+    user?.email ??
+    "User";
+
   return (
     <DashboardLayout
       breadcrumbs={[{ label: "Home", to: "/" }, { label: "Dashboard" }]}
     >
       <PageHeader
-        title="Dashboard"
-        description="Ringkasan operasional. Modul bisnis akan tersedia pada tahap berikutnya."
-        actions={<Button size="sm">Buat Tugas</Button>}
+        title={`Selamat datang, ${displayName}`}
+        description={
+          roles.length > 0
+            ? `Peran aktif: ${roles.join(", ")}.`
+            : "Anda belum memiliki peran khusus. Hubungi admin."
+        }
+        actions={
+          (isAdmin || isManager) && <Button size="sm">Buat Tugas</Button>
+        }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
