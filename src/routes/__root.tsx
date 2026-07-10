@@ -16,6 +16,7 @@ import { AuthProvider } from "../hooks/use-auth";
 import { supabase } from "../integrations/supabase/client";
 import { Toaster } from "../components/ui/sonner";
 import { COMPANY_LOGO_URL } from "@/lib/company";
+import { registerServiceWorker } from "@/lib/register-sw";
 
 function NotFoundComponent() {
   return (
