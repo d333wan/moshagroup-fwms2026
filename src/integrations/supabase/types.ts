@@ -53,6 +53,115 @@ export type Database = {
         }
         Relationships: []
       }
+      task_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string
+          assignee_id: string
+          id: string
+          task_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by: string
+          assignee_id: string
+          id?: string
+          task_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string
+          assignee_id?: string
+          id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_status_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          from_status: Database["public"]["Enums"]["task_status"] | null
+          id: string
+          note: string | null
+          task_id: string
+          to_status: Database["public"]["Enums"]["task_status"]
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          from_status?: Database["public"]["Enums"]["task_status"] | null
+          id?: string
+          note?: string | null
+          task_id: string
+          to_status: Database["public"]["Enums"]["task_status"]
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          from_status?: Database["public"]["Enums"]["task_status"] | null
+          id?: string
+          note?: string | null
+          task_id?: string
+          to_status?: Database["public"]["Enums"]["task_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_status_history_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          location_text: string | null
+          priority: Database["public"]["Enums"]["task_priority"]
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          location_text?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          location_text?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -92,6 +201,14 @@ export type Database = {
         Returns: boolean
       }
       is_admin_tier: { Args: { _user_id: string }; Returns: boolean }
+      list_assignable_users: {
+        Args: never
+        Returns: {
+          full_name: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       app_role:
@@ -100,6 +217,14 @@ export type Database = {
         | "manager"
         | "petugas_lapangan"
         | "guest"
+      task_priority: "low" | "medium" | "high" | "urgent"
+      task_status:
+        | "draft"
+        | "assigned"
+        | "in_progress"
+        | "on_hold"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -233,6 +358,15 @@ export const Constants = {
         "manager",
         "petugas_lapangan",
         "guest",
+      ],
+      task_priority: ["low", "medium", "high", "urgent"],
+      task_status: [
+        "draft",
+        "assigned",
+        "in_progress",
+        "on_hold",
+        "completed",
+        "cancelled",
       ],
     },
   },
