@@ -276,6 +276,52 @@ function TaskDetailPage() {
 
           <Card>
             <CardHeader>
+              <CardTitle className="text-base">Laporan Lapangan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {reports.isLoading ? (
+                <Loading />
+              ) : (reports.data ?? []).length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  Belum ada laporan.
+                </p>
+              ) : (
+                <ul className="space-y-4">
+                  {(reports.data ?? []).map((r: any) => (
+                    <li key={r.id} className="rounded-md border p-3">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <span className="rounded bg-muted px-2 py-0.5 uppercase">
+                          {r.report_type}
+                        </span>
+                        <span>
+                          {new Date(r.reported_at).toLocaleString("id-ID")}
+                        </span>
+                        {r.latitude != null && r.longitude != null ? (
+                          <span>
+                            📍 {Number(r.latitude).toFixed(4)},{" "}
+                            {Number(r.longitude).toFixed(4)}
+                          </span>
+                        ) : null}
+                      </div>
+                      {r.narrative ? (
+                        <p className="mt-2 whitespace-pre-line text-sm">
+                          {r.narrative}
+                        </p>
+                      ) : null}
+                      {(r.attachments ?? []).length > 0 ? (
+                        <div className="mt-2 text-xs text-muted-foreground">
+                          {r.attachments.length} lampiran
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle className="text-base">Riwayat Status</CardTitle>
             </CardHeader>
             <CardContent>
