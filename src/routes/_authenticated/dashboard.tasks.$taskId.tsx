@@ -393,7 +393,8 @@ function TaskDetailPage() {
                             <span className="text-sm">
                               {u.full_name || "(tanpa nama)"}
                               <span className="ml-2 text-xs text-muted-foreground">
-                                {u.role}
+                                {u.job_title ?? u.role}
+                                {u.phone ? ` · ${u.phone}` : ""}
                               </span>
                             </span>
                           </label>
