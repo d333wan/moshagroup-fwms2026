@@ -13,6 +13,8 @@ import { PublicLayout } from "@/layouts/public-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import androidPhone from "@/assets/android-phone-mockup.png";
+import heroBg from "@/assets/hero-bg.jpg.asset.json";
+import towerImg from "@/assets/tower.png.asset.json";
 
 
 export const Route = createFileRoute("/")({
