@@ -125,35 +125,6 @@ function LandingPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <Card className="overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card to-accent/20">
-          <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-center">
-            <img
-              src={COMPANY_LOGO_URL}
-              alt={`${COMPANY_NAME} logo`}
-              className="h-24 w-auto shrink-0 rounded-xl"
-            />
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                {COMPANY_NAME}
-              </h2>
-              <p className="mt-2 text-muted-foreground">
-                {COMPANY_DESCRIPTION}
-              </p>
-              <Button asChild variant="outline" className="mt-4">
-                <a
-                  href={COMPANY_WEBSITE}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Website Resmi
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
     </PublicLayout>
   );
 }
