@@ -113,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "Organization",
           name: "PT. MOSHA SERI NUSANTARA",
           url: "https://moshagroup-fwms2026.lovable.app",
-          logo: "https://moshagroup-fwms2026.lovable.app/favicon.ico",
+          logo: `https://moshagroup-fwms2026.lovable.app${COMPANY_LOGO_URL}`,
         }),
       },
     ],
