@@ -193,15 +193,18 @@ function LandingPage() {
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
-              <Card key={f.title} className="rounded-2xl">
+              <Card
+                key={f.title}
+                className="rounded-2xl border-orange/30 bg-orange text-orange-foreground"
+              >
                 <CardContent className="p-6">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-white">
                     <f.icon className="h-5 w-5" />
                   </div>
-                  <h3 className="text-base font-semibold text-foreground">
+                  <h3 className="text-base font-semibold text-white">
                     {f.title}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
+                  <p className="mt-1 text-sm text-white/90">{f.desc}</p>
                 </CardContent>
               </Card>
             ))}
