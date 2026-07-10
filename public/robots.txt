@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /dashboard
+
+Sitemap: https://moshagroup-fwms2026.lovable.app/sitemap.xml

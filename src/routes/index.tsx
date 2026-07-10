@@ -27,19 +27,44 @@ import heroBg from "@/assets/hero-bg.jpg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FWMS — Field Work Management System" },
+      { title: "FWMS Petugas Lapangan — PT. MOSHA SERI NUSANTARA" },
       {
         name: "description",
         content:
           "Kelola penugasan, pelaporan lapangan, monitoring progres, dan sinkronisasi online/offline dalam satu sistem terpadu.",
       },
-      { property: "og:title", content: "FWMS — Field Work Management System" },
+      {
+        property: "og:title",
+        content: "FWMS Petugas Lapangan — PT. MOSHA SERI NUSANTARA",
+      },
       {
         property: "og:description",
         content:
-          "Sistem terpadu untuk penugasan, pelaporan, monitoring, dan sinkronisasi pekerjaan lapangan.",
+          "Kelola penugasan, pelaporan lapangan, monitoring progres, dan sinkronisasi online/offline dalam satu sistem terpadu.",
       },
+      { property: "og:url", content: "https://moshagroup-fwms2026.lovable.app/" },
       { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://moshagroup-fwms2026.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "FWMS — Field Work Management System",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Android, Web",
+          description:
+            "Sistem terpadu untuk penugasan, pelaporan, monitoring, dan sinkronisasi pekerjaan lapangan.",
+          publisher: {
+            "@type": "Organization",
+            name: "PT. MOSHA SERI NUSANTARA",
+            url: "https://moshagroup-fwms2026.lovable.app",
+          },
+          offers: { "@type": "Offer", price: "0", priceCurrency: "IDR" },
+        }),
+      },
     ],
   }),
   component: LandingPage,
@@ -191,6 +216,9 @@ function LandingPage() {
           id="modul"
           className="mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8"
         >
+          <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Fitur Utama
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <Card

@@ -1,0 +1,7 @@
+# FWMS — Field Work Management System
+
+> Sistem terpadu PT. MOSHA SERI NUSANTARA untuk penugasan, pelaporan, monitoring, dan sinkronisasi pekerjaan lapangan (web + aplikasi Android petugas).
+
+## Pages
+
+- [Beranda](/): Ikhtisar FWMS, fitur utama, dan unduhan aplikasi Android petugas.
