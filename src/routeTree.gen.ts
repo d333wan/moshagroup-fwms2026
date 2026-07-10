@@ -16,6 +16,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedDashboardUsersRouteImport } from './routes/_authenticated/dashboard.users'
+import { Route as AuthenticatedDashboardTasksRouteImport } from './routes/_authenticated/dashboard.tasks'
+import { Route as AuthenticatedDashboardTasksIndexRouteImport } from './routes/_authenticated/dashboard.tasks.index'
+import { Route as AuthenticatedDashboardTasksNewRouteImport } from './routes/_authenticated/dashboard.tasks.new'
+import { Route as AuthenticatedDashboardTasksTaskIdRouteImport } from './routes/_authenticated/dashboard.tasks.$taskId'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -53,14 +57,42 @@ const AuthenticatedDashboardUsersRoute =
     path: '/users',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardTasksRoute =
+  AuthenticatedDashboardTasksRouteImport.update({
+    id: '/tasks',
+    path: '/tasks',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardTasksIndexRoute =
+  AuthenticatedDashboardTasksIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardTasksRoute,
+  } as any)
+const AuthenticatedDashboardTasksNewRoute =
+  AuthenticatedDashboardTasksNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedDashboardTasksRoute,
+  } as any)
+const AuthenticatedDashboardTasksTaskIdRoute =
+  AuthenticatedDashboardTasksTaskIdRouteImport.update({
+    id: '/$taskId',
+    path: '/$taskId',
+    getParentRoute: () => AuthenticatedDashboardTasksRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/tasks/$taskId': typeof AuthenticatedDashboardTasksTaskIdRoute
+  '/dashboard/tasks/new': typeof AuthenticatedDashboardTasksNewRoute
+  '/dashboard/tasks/': typeof AuthenticatedDashboardTasksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,6 +100,9 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/tasks/$taskId': typeof AuthenticatedDashboardTasksTaskIdRoute
+  '/dashboard/tasks/new': typeof AuthenticatedDashboardTasksNewRoute
+  '/dashboard/tasks': typeof AuthenticatedDashboardTasksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,8 +111,12 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/_authenticated/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
   '/_authenticated/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/dashboard/tasks/$taskId': typeof AuthenticatedDashboardTasksTaskIdRoute
+  '/_authenticated/dashboard/tasks/new': typeof AuthenticatedDashboardTasksNewRoute
+  '/_authenticated/dashboard/tasks/': typeof AuthenticatedDashboardTasksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -86,10 +125,22 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/dashboard'
+    | '/dashboard/tasks'
     | '/dashboard/users'
     | '/dashboard/'
+    | '/dashboard/tasks/$taskId'
+    | '/dashboard/tasks/new'
+    | '/dashboard/tasks/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/reset-password' | '/dashboard/users' | '/dashboard'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/dashboard/users'
+    | '/dashboard'
+    | '/dashboard/tasks/$taskId'
+    | '/dashboard/tasks/new'
+    | '/dashboard/tasks'
   id:
     | '__root__'
     | '/'
@@ -97,8 +148,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/_authenticated/dashboard'
+    | '/_authenticated/dashboard/tasks'
     | '/_authenticated/dashboard/users'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/dashboard/tasks/$taskId'
+    | '/_authenticated/dashboard/tasks/new'
+    | '/_authenticated/dashboard/tasks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,16 +214,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardUsersRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/tasks': {
+      id: '/_authenticated/dashboard/tasks'
+      path: '/tasks'
+      fullPath: '/dashboard/tasks'
+      preLoaderRoute: typeof AuthenticatedDashboardTasksRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/tasks/': {
+      id: '/_authenticated/dashboard/tasks/'
+      path: '/'
+      fullPath: '/dashboard/tasks/'
+      preLoaderRoute: typeof AuthenticatedDashboardTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardTasksRoute
+    }
+    '/_authenticated/dashboard/tasks/new': {
+      id: '/_authenticated/dashboard/tasks/new'
+      path: '/new'
+      fullPath: '/dashboard/tasks/new'
+      preLoaderRoute: typeof AuthenticatedDashboardTasksNewRouteImport
+      parentRoute: typeof AuthenticatedDashboardTasksRoute
+    }
+    '/_authenticated/dashboard/tasks/$taskId': {
+      id: '/_authenticated/dashboard/tasks/$taskId'
+      path: '/$taskId'
+      fullPath: '/dashboard/tasks/$taskId'
+      preLoaderRoute: typeof AuthenticatedDashboardTasksTaskIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardTasksRoute
+    }
   }
 }
 
+interface AuthenticatedDashboardTasksRouteChildren {
+  AuthenticatedDashboardTasksTaskIdRoute: typeof AuthenticatedDashboardTasksTaskIdRoute
+  AuthenticatedDashboardTasksNewRoute: typeof AuthenticatedDashboardTasksNewRoute
+  AuthenticatedDashboardTasksIndexRoute: typeof AuthenticatedDashboardTasksIndexRoute
+}
+
+const AuthenticatedDashboardTasksRouteChildren: AuthenticatedDashboardTasksRouteChildren =
+  {
+    AuthenticatedDashboardTasksTaskIdRoute:
+      AuthenticatedDashboardTasksTaskIdRoute,
+    AuthenticatedDashboardTasksNewRoute: AuthenticatedDashboardTasksNewRoute,
+    AuthenticatedDashboardTasksIndexRoute:
+      AuthenticatedDashboardTasksIndexRoute,
+  }
+
+const AuthenticatedDashboardTasksRouteWithChildren =
+  AuthenticatedDashboardTasksRoute._addFileChildren(
+    AuthenticatedDashboardTasksRouteChildren,
+  )
+
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardTasksRoute: typeof AuthenticatedDashboardTasksRouteWithChildren
   AuthenticatedDashboardUsersRoute: typeof AuthenticatedDashboardUsersRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardTasksRoute:
+      AuthenticatedDashboardTasksRouteWithChildren,
     AuthenticatedDashboardUsersRoute: AuthenticatedDashboardUsersRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }
