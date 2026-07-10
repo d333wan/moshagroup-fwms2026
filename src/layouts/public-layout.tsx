@@ -1,15 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/hooks/use-auth";
 import {
   COMPANY_LOGO_URL,
   COMPANY_NAME,
   COMPANY_WEBSITE,
 } from "@/lib/company";
 
+
 export function PublicLayout({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
@@ -39,9 +42,18 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 Website
               </a>
             </Button>
-            <Button asChild size="sm">
-              <Link to="/dashboard">Open Dashboard</Link>
-            </Button>
+            {user ? (
+              <Button asChild size="sm">
+                <Link to="/dashboard">Open Dashboard</Link>
+              </Button>
+            ) : (
+              <Button asChild size="sm">
+                <Link to="/auth">
+                  <LogIn className="mr-1.5 h-3.5 w-3.5" />
+                  Masuk
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </header>
