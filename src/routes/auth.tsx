@@ -128,9 +128,8 @@ function SignInForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="signin-password">Password</Label>
-        <Input
+        <PasswordInput
           id="signin-password"
-          type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
