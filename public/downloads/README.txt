@@ -1,4 +1,6 @@
-Letakkan file APK di sini dengan nama: fwms-petugas.apk
-Build via: bunx cap sync android && bunx cap open android
-Lalu di Android Studio: Build > Build APK(s)
-Salin app-debug.apk ke public/downloads/fwms-petugas.apk
+Letakkan file APK release TWA di sini dengan nama:
+
+    FWMS-Petugas-latest.apk
+
+APK dibangun menggunakan Bubblewrap dari PWA ini (lihat docs/BUILD-ANDROID-TWA.md).
+JANGAN commit file APK ke repository — file ini adalah artefak build hasil signing.

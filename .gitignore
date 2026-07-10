@@ -30,3 +30,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Android signing artifacts (never commit)
+*.jks
+*.keystore
+keystore.properties
+android/app/release/
+public/downloads/*.apk

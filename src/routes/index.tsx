@@ -185,13 +185,13 @@ function LandingPage() {
               </ul>
               <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                 <Button asChild size="lg">
-                  <a href="/downloads/fwms-petugas.apk" download>
+                  <a href="/downloads/FWMS-Petugas-latest.apk" download>
                     <Download className="mr-2 h-4 w-4" />
                     Download APK Android
                   </a>
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  APK ± 15 MB · Android 8.0+
+                  Android 8.0+ · <Link to="/download" className="underline">Halaman download lengkap</Link>
                 </span>
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
