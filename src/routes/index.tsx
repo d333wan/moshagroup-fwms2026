@@ -94,8 +94,8 @@ function LandingPage() {
         >
           <div className="relative mx-auto max-w-3xl px-4 pb-20 pt-20 text-center sm:px-6 lg:px-8">
             <div className="max-w-2xl">
-              <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-                Enterprise · Phase 1 Foundation
+              <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-medium text-white backdrop-blur sm:px-4 sm:py-1.5 sm:text-base">
+                PT. MOSHA SERI NUSANTARA
               </span>
               <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
                 Field Work Management System
