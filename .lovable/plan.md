@@ -1,87 +1,105 @@
 
-# Strategi: Lovable Cloud (dev) → Supabase Eksternal (prod)
+# Phase 3 — Modul Penugasan (Tasks)
 
-Tujuan: mempercepat iterasi Phase 2 (Auth + RBAC) dengan Lovable Cloud yang otomatis provisioning, lalu pindah ke project Supabase eksternal Anda (`pkxnbazymwetrtckgikg`) saat siap rilis.
+Melanjutkan roadmap setelah Phase 2 (Auth + RBAC + manajemen pengguna). Fokus fase ini: CRUD tugas, penugasan ke petugas lapangan, prioritas & status, dengan RLS ketat sesuai peran.
 
----
+## Ruang Lingkup
 
-## Bagian A — Aktifkan Lovable Cloud (sekarang)
+**Termasuk:**
+- Tabel `tasks` + `task_assignments` (satu tugas → banyak petugas) + `task_status_history` (audit).
+- Halaman `/dashboard/tasks` (list + filter + search), `/dashboard/tasks/new`, `/dashboard/tasks/$taskId` (detail + edit + assign + ubah status).
+- Menu sidebar "Penugasan" diaktifkan (saat ini masih placeholder → `/dashboard`).
+- Widget dashboard "Tugas Aktif" & "Aktivitas Terbaru" membaca data nyata.
 
-1. **Enable Lovable Cloud** via tool `supabase--enable`.
-   - Otomatis buat project Supabase baru khusus dev + inject `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` baru ke `.env`.
-   - Tidak menghapus kredensial eksternal Anda — kita simpan dulu di file lain (lihat langkah 2).
+**Tidak termasuk (fase berikutnya):**
+- Master data Petugas & Lokasi (Phase 4)
+- Laporan lapangan / foto / tanda tangan (Phase 5)
+- Notifikasi realtime & mobile offline sync
 
-2. **Backup kredensial eksternal** ke `.env.external` (tidak dipakai runtime, hanya arsip):
-   ```
-   EXTERNAL_SUPABASE_URL=https://pkxnbazymwetrtckgikg.supabase.co
-   EXTERNAL_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOi...Dx1fU
-   ```
-   Ini supaya nanti tinggal copy-paste balik.
+## Skema Database
 
-3. **Jalankan migration Phase 2** (`db/phase2_auth_rbac.sql`) di Lovable Cloud.
-   - Karena Cloud terintegrasi, saya bisa jalankan SQL otomatis lewat tool migration (tidak perlu paste manual).
-   - Skema: `app_role` enum, `profiles`, `user_roles`, `has_role`, `get_user_roles`, trigger auto-create profile + default role `viewer`, RLS policies, semua GRANT.
+```text
+enum task_priority   : low | medium | high | urgent
+enum task_status     : draft | assigned | in_progress | on_hold | completed | cancelled
 
-4. **Seed admin pertama** — setelah Anda signup via `/auth`, saya siapkan tombol/SQL snippet untuk promote akun pertama jadi `admin`.
+tasks
+  id uuid pk
+  title text not null
+  description text
+  priority task_priority default 'medium'
+  status   task_status   default 'draft'
+  due_date timestamptz
+  location_text text            -- alamat bebas (Phase 4 pindah ke tabel locations)
+  created_by uuid → auth.users
+  created_at / updated_at
 
-5. **Kode aplikasi tidak berubah.** `src/integrations/supabase/client.ts` sudah baca `import.meta.env.VITE_SUPABASE_*` — otomatis pakai kredensial Cloud yang baru.
+task_assignments
+  id uuid pk
+  task_id uuid → tasks (cascade)
+  assignee_id uuid → auth.users
+  assigned_by uuid → auth.users
+  assigned_at timestamptz
+  unique (task_id, assignee_id)
 
----
+task_status_history
+  id, task_id, from_status, to_status, changed_by, changed_at, note
+```
 
-## Bagian B — Selama development
+**RLS (ringkas):**
+- `super_admin` / `admin` / `manager`: full read; create/update/delete pada tugas yang mereka buat atau semua (manager+).
+- `petugas_lapangan`: read & update **hanya** tugas di mana `assignee_id = auth.uid()`; boleh ubah status tapi tidak boleh menghapus atau reassign.
+- `guest`: read-only pada tugas mereka sendiri (assignee).
+- Semua write memakai fungsi `has_role()` yang sudah ada.
 
-- Semua signup, login, role assignment, dan data uji hidup di Lovable Cloud.
-- Bebas reset/rebuild skema kapan saja tanpa mengganggu project eksternal.
-- Lanjut Phase 3+ (Tasks, Petugas, Laporan) di atas Cloud.
+GRANT lengkap ke `authenticated` + `service_role` untuk ketiga tabel (sesuai aturan public schema).
 
----
+Trigger: `updated_at` auto-update, dan trigger insert ke `task_status_history` setiap kali `status` berubah.
 
-## Bagian C — Migrasi balik ke Supabase eksternal (saat siap production)
+## Server Functions (`src/lib/tasks.functions.ts`)
 
-Ketika Anda bilang "siap pindah ke eksternal", saya akan:
+Semua pakai `requireSupabaseAuth` middleware; RLS jadi lapis kedua.
 
-1. **Export skema + data dari Lovable Cloud**
-   - Skema: kumpulkan semua migration SQL yang sudah dijalankan → 1 file `db/production_schema.sql`.
-   - Data (opsional): export tabel `profiles`, `user_roles`, dsb. lewat SQL Editor / `pg_dump`.
+- `listTasks({ status?, priority?, assigneeId?, search? })`
+- `getTask({ id })` → task + assignments + history
+- `createTask(input)` (admin/manager/super_admin)
+- `updateTask({ id, patch })` (creator atau manager+)
+- `deleteTask({ id })` (manager+)
+- `assignTask({ task_id, assignee_ids })` — replace assignments (manager+)
+- `changeTaskStatus({ id, to_status, note? })` (assignee atau manager+)
 
-2. **Apply ke project Supabase eksternal Anda**
-   - Anda paste `db/production_schema.sql` di SQL Editor project `pkxnbazymwetrtckgikg`.
-   - (Opsional) restore data seed.
+## Routing & UI
 
-3. **Swap kredensial di `.env`**
-   ```
-   VITE_SUPABASE_URL=https://pkxnbazymwetrtckgikg.supabase.co
-   VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOi...Dx1fU   # dari .env.external
-   ```
-   Hapus/comment variabel Cloud.
+Route baru (TanStack file-based):
 
-4. **Disable Lovable Cloud** (opsional) supaya tidak ada dua backend aktif.
+- `src/routes/_authenticated/dashboard.tasks.tsx` — layout `<Outlet/>`
+- `src/routes/_authenticated/dashboard.tasks.index.tsx` — daftar
+- `src/routes/_authenticated/dashboard.tasks.new.tsx` — form buat
+- `src/routes/_authenticated/dashboard.tasks.$taskId.tsx` — detail + edit + assign + ubah status
 
-5. **Set Site URL** di Supabase Dashboard eksternal → URL published Lovable Anda.
+Pola data: loader panggil `context.queryClient.ensureQueryData(...)`, komponen `useSuspenseQuery` — sesuai konvensi project.
 
-6. **Test end-to-end**: signup baru, login, cek role guard `/dashboard`.
+Komponen baru (kecil, semantic tokens saja):
+- `TasksTable` (dengan filter chips: status, prioritas, assignee)
+- `TaskStatusBadge`, `TaskPriorityBadge`
+- `AssigneePicker` (multi-select petugas dari daftar user `petugas_lapangan`)
+- `StatusChangeDialog` (pilih status baru + catatan)
 
----
+Update:
+- `app-sidebar.tsx` — item "Penugasan" arahkan ke `/dashboard/tasks` (semua role); tampilkan hanya bila punya minimal role `guest`.
+- `dashboard.index.tsx` — kartu statistik "Tugas Aktif" & "Aktivitas Terbaru" fetch dari `listTasks`.
 
-## Yang berubah / tidak berubah
+## Design & UX
 
-| Area | Bagian A (Cloud) | Bagian C (Eksternal) |
-| --- | --- | --- |
-| `.env` VITE_SUPABASE_* | Cloud otomatis inject | Manual swap balik |
-| `client.ts` | Tidak berubah | Tidak berubah |
-| Skema DB | Auto-migrate | Paste SQL manual |
-| Auth flow / RBAC code | Sama | Sama |
+Menggunakan token yang sudah ada (`bg-card`, `border`, `text-foreground`, `text-muted-foreground`). Tidak ada warna hardcoded. Badge status/prioritas pakai `variant` shadcn + token accent/destructive.
 
----
+## Deliverables per Turn
 
-## Konfirmasi sebelum saya lanjut
+1. Migration SQL (enums, tabel, RLS, GRANT, trigger).
+2. Server functions + query options module.
+3. Route files + komponen tabel/form/dialog.
+4. Sidebar & dashboard home update.
+5. Smoke test manual: super_admin buat task → assign ke user petugas → login petugas → ubah status → verifikasi history.
 
-Kalau Anda oke, saya akan:
-1. Enable Lovable Cloud
-2. Backup kredensial eksternal ke `.env.external`
-3. Jalankan migration Phase 2 di Cloud
-4. Kasih instruksi signup + promote admin
+## Konfirmasi
 
-**Catatan penting**: data yang Anda buat di Lovable Cloud selama dev **tidak otomatis** pindah ke Supabase eksternal — hanya skema. Kalau butuh migrasi data juga, sebut saat kita sampai Bagian C.
-
-Setuju lanjut?
+Setuju scope di atas? Kalau ada tambahan (mis. field checklist item, attachment, atau tag), sebutkan sebelum saya mulai — akan lebih mahal jika ditambahkan setelah tabel jadi.
