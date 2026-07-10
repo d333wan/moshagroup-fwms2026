@@ -7,17 +7,11 @@ import {
   RefreshCw,
   BarChart3,
   ArrowRight,
-  ExternalLink,
 } from "lucide-react";
 import { PublicLayout } from "@/layouts/public-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  COMPANY_LOGO_URL,
-  COMPANY_NAME,
-  COMPANY_DESCRIPTION,
-  COMPANY_WEBSITE,
-} from "@/lib/company";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
