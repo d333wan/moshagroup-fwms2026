@@ -50,7 +50,7 @@ export function AppHeader({ breadcrumbs }: AppHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md sm:px-6">
+    <header className="sticky top-0 z-30 flex h-[72px] items-center gap-3 border-b border-border bg-card px-4 shadow-xs sm:px-6">
       <SidebarTrigger />
       <Separator orientation="vertical" className="h-6" />
       <div className="hidden md:block">
