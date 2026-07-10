@@ -50,7 +50,7 @@ function AuthPage() {
       <div className="w-full max-w-md">
         <div className="mb-6 flex flex-col items-center gap-2 text-center">
           <img src={COMPANY_LOGO_URL} alt={COMPANY_NAME} className="h-10 w-auto" />
-          <h1 className="text-2xl font-semibold tracking-tight">FWMS</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Masuk ke FWMS</h1>
           <p className="text-sm text-muted-foreground">
             Field Work Management System — {COMPANY_NAME}
           </p>

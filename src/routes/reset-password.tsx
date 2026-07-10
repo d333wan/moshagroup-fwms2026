@@ -38,6 +38,9 @@ function ResetPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md">
+        <h1 className="mb-6 text-center text-2xl font-semibold tracking-tight">
+          Reset Password
+        </h1>
         <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle>Set Password Baru</CardTitle>

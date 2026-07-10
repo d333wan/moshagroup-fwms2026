@@ -88,12 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Sistem terpadu untuk penugasan, pelaporan, monitoring, dan sinkronisasi pekerjaan lapangan.",
       },
-      { property: "og:title", content: "FWMS — Field Work Management System" },
-      {
-        property: "og:description",
-        content:
-          "Sistem terpadu untuk penugasan, pelaporan, monitoring, dan sinkronisasi pekerjaan lapangan.",
-      },
+      { property: "og:site_name", content: "FWMS — PT. MOSHA SERI NUSANTARA" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -103,6 +98,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", type: "image/png", href: COMPANY_LOGO_URL },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "PT. MOSHA SERI NUSANTARA",
+          url: "https://moshagroup-fwms2026.lovable.app",
+          logo: "https://moshagroup-fwms2026.lovable.app/favicon.ico",
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
