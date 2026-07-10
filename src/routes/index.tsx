@@ -189,13 +189,13 @@ function LandingPage() {
 
         <section
           id="modul"
-          className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8"
+          className="mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8"
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <Card
                 key={f.title}
-                className="rounded-2xl border-orange/30 bg-orange text-orange-foreground"
+                className="rounded-2xl border-feature/30 bg-feature text-feature-foreground"
               >
                 <CardContent className="p-6">
                   <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-white">
