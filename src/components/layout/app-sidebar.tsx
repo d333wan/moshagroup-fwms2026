@@ -9,6 +9,7 @@ import {
   Settings,
   ShieldCheck,
   UserCog,
+  HardHat,
 } from "lucide-react";
 import {
   Sidebar,

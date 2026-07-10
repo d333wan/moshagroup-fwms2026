@@ -19,6 +19,7 @@ import { Route as AuthenticatedDashboardUsersRouteImport } from './routes/_authe
 import { Route as AuthenticatedDashboardTasksRouteImport } from './routes/_authenticated/dashboard.tasks'
 import { Route as AuthenticatedDashboardOfficersRouteImport } from './routes/_authenticated/dashboard.officers'
 import { Route as AuthenticatedDashboardNotificationsRouteImport } from './routes/_authenticated/dashboard.notifications'
+import { Route as AuthenticatedDashboardMyWorkRouteImport } from './routes/_authenticated/dashboard.my-work'
 import { Route as AuthenticatedDashboardLocationsRouteImport } from './routes/_authenticated/dashboard.locations'
 import { Route as AuthenticatedDashboardTasksIndexRouteImport } from './routes/_authenticated/dashboard.tasks.index'
 import { Route as AuthenticatedDashboardOfficersIndexRouteImport } from './routes/_authenticated/dashboard.officers.index'
@@ -83,6 +84,12 @@ const AuthenticatedDashboardNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardMyWorkRoute =
+  AuthenticatedDashboardMyWorkRouteImport.update({
+    id: '/my-work',
+    path: '/my-work',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardLocationsRoute =
   AuthenticatedDashboardLocationsRouteImport.update({
     id: '/locations',
@@ -144,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/dashboard/locations': typeof AuthenticatedDashboardLocationsRouteWithChildren
+  '/dashboard/my-work': typeof AuthenticatedDashboardMyWorkRoute
   '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/officers': typeof AuthenticatedDashboardOfficersRouteWithChildren
   '/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
@@ -162,6 +170,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/dashboard/my-work': typeof AuthenticatedDashboardMyWorkRoute
   '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -182,6 +191,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/dashboard/locations': typeof AuthenticatedDashboardLocationsRouteWithChildren
+  '/_authenticated/dashboard/my-work': typeof AuthenticatedDashboardMyWorkRoute
   '/_authenticated/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/_authenticated/dashboard/officers': typeof AuthenticatedDashboardOfficersRouteWithChildren
   '/_authenticated/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
@@ -204,6 +214,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard'
     | '/dashboard/locations'
+    | '/dashboard/my-work'
     | '/dashboard/notifications'
     | '/dashboard/officers'
     | '/dashboard/tasks'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/reset-password'
+    | '/dashboard/my-work'
     | '/dashboard/notifications'
     | '/dashboard/users'
     | '/dashboard'
@@ -241,6 +253,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/dashboard'
     | '/_authenticated/dashboard/locations'
+    | '/_authenticated/dashboard/my-work'
     | '/_authenticated/dashboard/notifications'
     | '/_authenticated/dashboard/officers'
     | '/_authenticated/dashboard/tasks'
@@ -333,6 +346,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/dashboard/notifications'
       preLoaderRoute: typeof AuthenticatedDashboardNotificationsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/my-work': {
+      id: '/_authenticated/dashboard/my-work'
+      path: '/my-work'
+      fullPath: '/dashboard/my-work'
+      preLoaderRoute: typeof AuthenticatedDashboardMyWorkRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/locations': {
@@ -474,6 +494,7 @@ const AuthenticatedDashboardTasksRouteWithChildren =
 
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardLocationsRoute: typeof AuthenticatedDashboardLocationsRouteWithChildren
+  AuthenticatedDashboardMyWorkRoute: typeof AuthenticatedDashboardMyWorkRoute
   AuthenticatedDashboardNotificationsRoute: typeof AuthenticatedDashboardNotificationsRoute
   AuthenticatedDashboardOfficersRoute: typeof AuthenticatedDashboardOfficersRouteWithChildren
   AuthenticatedDashboardTasksRoute: typeof AuthenticatedDashboardTasksRouteWithChildren
@@ -485,6 +506,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardLocationsRoute:
       AuthenticatedDashboardLocationsRouteWithChildren,
+    AuthenticatedDashboardMyWorkRoute: AuthenticatedDashboardMyWorkRoute,
     AuthenticatedDashboardNotificationsRoute:
       AuthenticatedDashboardNotificationsRoute,
     AuthenticatedDashboardOfficersRoute:
