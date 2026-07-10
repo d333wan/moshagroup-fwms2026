@@ -7,10 +7,12 @@ import {
   RefreshCw,
   BarChart3,
   ArrowRight,
+  Download,
 } from "lucide-react";
 import { PublicLayout } from "@/layouts/public-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import androidPhone from "@/assets/android-phone-mockup.png";
 
 
 export const Route = createFileRoute("/")({
