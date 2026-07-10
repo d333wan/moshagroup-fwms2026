@@ -42,9 +42,18 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 Website
               </a>
             </Button>
-            <Button asChild size="sm">
-              <Link to="/dashboard">Open Dashboard</Link>
-            </Button>
+            {user ? (
+              <Button asChild size="sm">
+                <Link to="/dashboard">Open Dashboard</Link>
+              </Button>
+            ) : (
+              <Button asChild size="sm">
+                <Link to="/auth">
+                  <LogIn className="mr-1.5 h-3.5 w-3.5" />
+                  Masuk
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </header>
