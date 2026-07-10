@@ -201,6 +201,14 @@ export type Database = {
         Returns: boolean
       }
       is_admin_tier: { Args: { _user_id: string }; Returns: boolean }
+      is_task_assignee: {
+        Args: { _task_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_task_creator: {
+        Args: { _task_id: string; _user_id: string }
+        Returns: boolean
+      }
       list_assignable_users: {
         Args: never
         Returns: {
