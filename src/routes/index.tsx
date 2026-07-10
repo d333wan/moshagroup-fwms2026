@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import androidPhone from "@/assets/android-phone-mockup.png";
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
-import towerImg from "@/assets/tower.png.asset.json";
 
 
 export const Route = createFileRoute("/")({
@@ -82,14 +81,8 @@ function LandingPage() {
           backgroundPosition: "center",
         }}
       >
-        <img
-          src={towerImg.url}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-0 hidden h-full w-auto opacity-30 lg:block"
-        />
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-20 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:items-center lg:px-8">
-          <div className="max-w-2xl text-left">
+        <div className="relative mx-auto max-w-3xl px-4 pb-20 pt-20 text-center sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
             <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur">
               Enterprise · Phase 1 Foundation
             </span>
@@ -101,7 +94,7 @@ function LandingPage() {
               lapangan, monitoring progres, serta sinkronisasi data secara
               online dan offline.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Button asChild size="lg">
                 <Link to="/dashboard">
                   Masuk ke Dashboard
@@ -120,13 +113,6 @@ function LandingPage() {
                 </a>
               </Button>
             </div>
-          </div>
-          <div className="lg:hidden">
-            <img
-              src={towerImg.url}
-              alt="Menara telekomunikasi"
-              className="mx-auto max-h-72 w-auto opacity-80"
-            />
           </div>
         </div>
       </section>
