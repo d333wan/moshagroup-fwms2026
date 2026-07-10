@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider } from "../hooks/use-theme";
+import { COMPANY_LOGO_URL } from "@/lib/company";
+
 
 function NotFoundComponent() {
   return (
