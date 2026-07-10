@@ -8,6 +8,7 @@ import {
   Bell,
   Settings,
   ShieldCheck,
+  UserCog,
 } from "lucide-react";
 import {
   Sidebar,
@@ -21,12 +22,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/use-auth";
 
-const mainNav = [
+type NavItem = { label: string; to: string; icon: typeof LayoutDashboard };
+
+const mainNav: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
 ];
 
-const placeholderNav = [
+const placeholderNav: NavItem[] = [
   { label: "Penugasan", to: "/dashboard", icon: ClipboardList },
   { label: "Petugas Lapangan", to: "/dashboard", icon: Users },
   { label: "Lokasi", to: "/dashboard", icon: MapPin },
@@ -34,14 +38,15 @@ const placeholderNav = [
   { label: "Notifikasi", to: "/dashboard", icon: Bell },
 ];
 
-const systemNav = [
+const systemNav: NavItem[] = [
   { label: "Pengaturan", to: "/dashboard", icon: Settings },
 ];
 
 export function AppSidebar() {
   const { location } = useRouterState();
+  const { isSuperAdmin } = useAuth();
 
-  const renderItems = (items: typeof mainNav) =>
+  const renderItems = (items: NavItem[]) =>
     items.map((item) => {
       const active = location.pathname === item.to;
       const Icon = item.icon;
@@ -83,6 +88,18 @@ export function AppSidebar() {
             <SidebarMenu>{renderItems(placeholderNav)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        {isSuperAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administrasi</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {renderItems([
+                  { label: "Pengguna", to: "/dashboard/users", icon: UserCog },
+                ])}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         <SidebarGroup>
           <SidebarGroupLabel>Sistem</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -92,9 +109,10 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-          v0.1.0 · Phase 1
+          v0.2.0 · Phase 2
         </div>
       </SidebarFooter>
     </Sidebar>
   );
 }
+
