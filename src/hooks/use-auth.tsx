@@ -18,9 +18,12 @@ interface AuthContextValue {
   loading: boolean;
   hasRole: (role: AppRole) => boolean;
   hasAnyRole: (roles: AppRole[]) => boolean;
+  isSuperAdmin: boolean;
   isAdmin: boolean;
+  isAdminTier: boolean;
   isManager: boolean;
   isPetugas: boolean;
+  isGuest: boolean;
   refreshRoles: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -100,9 +103,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       hasRole: (role) => roles.includes(role),
       hasAnyRole: (rs) => rs.some((r) => roles.includes(r)),
+      isSuperAdmin: roles.includes("super_admin"),
       isAdmin: roles.includes("admin"),
+      isAdminTier: roles.includes("super_admin") || roles.includes("admin"),
       isManager: roles.includes("manager"),
-      isPetugas: roles.includes("petugas"),
+      isPetugas: roles.includes("petugas_lapangan"),
+      isGuest: roles.includes("guest"),
       refreshRoles,
       signOut,
     }),
