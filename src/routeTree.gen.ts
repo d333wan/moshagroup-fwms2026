@@ -19,6 +19,7 @@ import { Route as AuthenticatedDashboardUsersRouteImport } from './routes/_authe
 import { Route as AuthenticatedDashboardTasksRouteImport } from './routes/_authenticated/dashboard.tasks'
 import { Route as AuthenticatedDashboardTasksIndexRouteImport } from './routes/_authenticated/dashboard.tasks.index'
 import { Route as AuthenticatedDashboardTasksNewRouteImport } from './routes/_authenticated/dashboard.tasks.new'
+import { Route as AuthenticatedDashboardTasksTaskIdRouteImport } from './routes/_authenticated/dashboard.tasks.$taskId'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -74,6 +75,12 @@ const AuthenticatedDashboardTasksNewRoute =
     path: '/new',
     getParentRoute: () => AuthenticatedDashboardTasksRoute,
   } as any)
+const AuthenticatedDashboardTasksTaskIdRoute =
+  AuthenticatedDashboardTasksTaskIdRouteImport.update({
+    id: '/$taskId',
+    path: '/$taskId',
+    getParentRoute: () => AuthenticatedDashboardTasksRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/tasks/$taskId': typeof AuthenticatedDashboardTasksTaskIdRoute
   '/dashboard/tasks/new': typeof AuthenticatedDashboardTasksNewRoute
   '/dashboard/tasks/': typeof AuthenticatedDashboardTasksIndexRoute
 }
@@ -92,6 +100,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/tasks/$taskId': typeof AuthenticatedDashboardTasksTaskIdRoute
   '/dashboard/tasks/new': typeof AuthenticatedDashboardTasksNewRoute
   '/dashboard/tasks': typeof AuthenticatedDashboardTasksIndexRoute
 }
@@ -105,6 +114,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
   '/_authenticated/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/dashboard/tasks/$taskId': typeof AuthenticatedDashboardTasksTaskIdRoute
   '/_authenticated/dashboard/tasks/new': typeof AuthenticatedDashboardTasksNewRoute
   '/_authenticated/dashboard/tasks/': typeof AuthenticatedDashboardTasksIndexRoute
 }
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/dashboard/tasks'
     | '/dashboard/users'
     | '/dashboard/'
+    | '/dashboard/tasks/$taskId'
     | '/dashboard/tasks/new'
     | '/dashboard/tasks/'
   fileRoutesByTo: FileRoutesByTo
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard/users'
     | '/dashboard'
+    | '/dashboard/tasks/$taskId'
     | '/dashboard/tasks/new'
     | '/dashboard/tasks'
   id:
@@ -139,6 +151,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/tasks'
     | '/_authenticated/dashboard/users'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/dashboard/tasks/$taskId'
     | '/_authenticated/dashboard/tasks/new'
     | '/_authenticated/dashboard/tasks/'
   fileRoutesById: FileRoutesById
@@ -222,16 +235,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardTasksNewRouteImport
       parentRoute: typeof AuthenticatedDashboardTasksRoute
     }
+    '/_authenticated/dashboard/tasks/$taskId': {
+      id: '/_authenticated/dashboard/tasks/$taskId'
+      path: '/$taskId'
+      fullPath: '/dashboard/tasks/$taskId'
+      preLoaderRoute: typeof AuthenticatedDashboardTasksTaskIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardTasksRoute
+    }
   }
 }
 
 interface AuthenticatedDashboardTasksRouteChildren {
+  AuthenticatedDashboardTasksTaskIdRoute: typeof AuthenticatedDashboardTasksTaskIdRoute
   AuthenticatedDashboardTasksNewRoute: typeof AuthenticatedDashboardTasksNewRoute
   AuthenticatedDashboardTasksIndexRoute: typeof AuthenticatedDashboardTasksIndexRoute
 }
 
 const AuthenticatedDashboardTasksRouteChildren: AuthenticatedDashboardTasksRouteChildren =
   {
+    AuthenticatedDashboardTasksTaskIdRoute:
+      AuthenticatedDashboardTasksTaskIdRoute,
     AuthenticatedDashboardTasksNewRoute: AuthenticatedDashboardTasksNewRoute,
     AuthenticatedDashboardTasksIndexRoute:
       AuthenticatedDashboardTasksIndexRoute,

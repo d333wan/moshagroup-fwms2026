@@ -31,7 +31,7 @@ const mainNav: NavItem[] = [
 ];
 
 const placeholderNav: NavItem[] = [
-  { label: "Penugasan", to: "/dashboard", icon: ClipboardList },
+  { label: "Penugasan", to: "/dashboard/tasks", icon: ClipboardList },
   { label: "Petugas Lapangan", to: "/dashboard", icon: Users },
   { label: "Lokasi", to: "/dashboard", icon: MapPin },
   { label: "Kendaraan", to: "/dashboard", icon: Truck },
