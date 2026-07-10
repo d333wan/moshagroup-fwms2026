@@ -178,3 +178,95 @@ export const updateMyStatus = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Field-officer personal dashboard data: status + task counts + today's tasks (with location) + recent reports. */
+export const myFieldDashboard = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const uid = context.userId;
+
+    // Officer status + profile
+    const [{ data: officer }, { data: profile }] = await Promise.all([
+      context.supabase
+        .from("field_officers")
+        .select("status, department, notes")
+        .eq("user_id", uid)
+        .maybeSingle(),
+      context.supabase
+        .from("profiles")
+        .select("full_name, job_title, phone")
+        .eq("id", uid)
+        .maybeSingle(),
+    ]);
+
+    // Tasks assigned to me (RLS already limits, but be explicit via join)
+    const { data: taskRows, error: tErr } = await context.supabase
+      .from("task_assignments")
+      .select(
+        "task_id, tasks!inner(id, title, priority, status, due_date, location_text, location_id, locations(name, address, latitude, longitude))",
+      )
+      .eq("assignee_id", uid);
+    if (tErr) throw new Error(tErr.message);
+
+    const tasks = (taskRows ?? [])
+      .map((r: any) => r.tasks)
+      .filter(Boolean)
+      .map((t: any) => ({
+        id: t.id as string,
+        title: t.title as string,
+        priority: t.priority as string,
+        status: t.status as string,
+        due_date: t.due_date as string | null,
+        location_text: t.location_text as string | null,
+        location: t.locations
+          ? {
+              name: t.locations.name as string,
+              address: (t.locations.address as string | null) ?? null,
+              latitude: (t.locations.latitude as number | null) ?? null,
+              longitude: (t.locations.longitude as number | null) ?? null,
+            }
+          : null,
+      }));
+
+    // Stats
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+
+    const active = tasks.filter((t) =>
+      ["assigned", "in_progress", "on_hold"].includes(t.status),
+    );
+    const todayTasks = tasks.filter(
+      (t) => t.due_date && t.due_date.slice(0, 10) === todayStr,
+    );
+    const inProgress = tasks.filter((t) => t.status === "in_progress");
+    const completed = tasks.filter((t) => t.status === "completed");
+
+    // Reports (mine) — count this week & recent 5
+    const { data: reports } = await context.supabase
+      .from("task_reports")
+      .select("id, task_id, report_type, narrative, reported_at, latitude, longitude")
+      .eq("reported_by", uid)
+      .order("reported_at", { ascending: false })
+      .limit(20);
+    const reportsThisWeek = (reports ?? []).filter(
+      (r: any) => new Date(r.reported_at) >= weekStart,
+    );
+
+    return {
+      profile: profile ?? null,
+      officer: officer ?? { status: "off_duty" as const, department: null, notes: null },
+      stats: {
+        activeCount: active.length,
+        todayCount: todayTasks.length,
+        inProgressCount: inProgress.length,
+        completedCount: completed.length,
+        reportsThisWeekCount: reportsThisWeek.length,
+      },
+      todayTasks,
+      allTasks: tasks,
+      recentReports: (reports ?? []).slice(0, 5),
+    };
+  });
