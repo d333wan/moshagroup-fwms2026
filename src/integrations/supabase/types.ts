@@ -20,6 +20,10 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_active: boolean
+          last_login_at: string | null
+          locked_at: string | null
+          must_change_password: boolean
           phone: string | null
           updated_at: string
         }
@@ -28,6 +32,10 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          is_active?: boolean
+          last_login_at?: string | null
+          locked_at?: string | null
+          must_change_password?: boolean
           phone?: string | null
           updated_at?: string
         }
@@ -36,6 +44,10 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_active?: boolean
+          last_login_at?: string | null
+          locked_at?: string | null
+          must_change_password?: boolean
           phone?: string | null
           updated_at?: string
         }
@@ -67,6 +79,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      count_active_super_admins: { Args: never; Returns: number }
       get_user_roles: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -78,9 +91,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin_tier: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "manager" | "petugas" | "viewer"
+      app_role:
+        | "super_admin"
+        | "admin"
+        | "manager"
+        | "petugas_lapangan"
+        | "guest"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -208,7 +227,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "manager", "petugas", "viewer"],
+      app_role: [
+        "super_admin",
+        "admin",
+        "manager",
+        "petugas_lapangan",
+        "guest",
+      ],
     },
   },
 } as const
