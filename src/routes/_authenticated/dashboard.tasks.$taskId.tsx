@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Trash2 } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +41,7 @@ import {
   getTask,
   listAssignableUsers,
 } from "@/lib/tasks.functions";
+import { listReports } from "@/lib/reports.functions";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute(
