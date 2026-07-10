@@ -7,10 +7,17 @@ import {
   RefreshCw,
   BarChart3,
   ArrowRight,
+  ExternalLink,
 } from "lucide-react";
 import { PublicLayout } from "@/layouts/public-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  COMPANY_LOGO_URL,
+  COMPANY_NAME,
+  COMPANY_DESCRIPTION,
+  COMPANY_WEBSITE,
+} from "@/lib/company";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -69,8 +76,29 @@ const features = [
 function LandingPage() {
   return (
     <PublicLayout>
-      <section className="mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
+          <a
+            href={COMPANY_WEBSITE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mx-auto mb-6 inline-flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-colors hover:bg-accent"
+          >
+            <img
+              src={COMPANY_LOGO_URL}
+              alt={`${COMPANY_NAME} logo`}
+              className="h-12 w-auto"
+            />
+            <div className="text-left">
+              <p className="text-sm font-semibold text-foreground">
+                {COMPANY_NAME}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Kunjungi website resmi →
+              </p>
+            </div>
+          </a>
+
           <span className="inline-flex items-center rounded-full border border-border bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
             Enterprise · Phase 1 Foundation
           </span>
@@ -98,7 +126,7 @@ function LandingPage() {
 
       <section
         id="modul"
-        className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8"
+        className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8"
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f) => (
@@ -115,6 +143,36 @@ function LandingPage() {
             </Card>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        <Card className="overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card to-accent/20">
+          <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-center">
+            <img
+              src={COMPANY_LOGO_URL}
+              alt={`${COMPANY_NAME} logo`}
+              className="h-24 w-auto shrink-0 rounded-xl"
+            />
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                {COMPANY_NAME}
+              </h2>
+              <p className="mt-2 text-muted-foreground">
+                {COMPANY_DESCRIPTION}
+              </p>
+              <Button asChild variant="outline" className="mt-4">
+                <a
+                  href={COMPANY_WEBSITE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Website Resmi
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </section>
     </PublicLayout>
   );
