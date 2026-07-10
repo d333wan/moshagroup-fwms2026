@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { Bell, LogOut, User as UserIcon } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -17,6 +18,8 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppBreadcrumb } from "@/components/common/app-breadcrumb";
 import { useAuth } from "@/hooks/use-auth";
+import { unreadCount } from "@/lib/notifications.functions";
+import { supabase } from "@/integrations/supabase/client";
 import type { BreadcrumbItem } from "@/types";
 
 interface AppHeaderProps {
@@ -42,12 +45,44 @@ export function AppHeader({ breadcrumbs }: AppHeaderProps) {
     user?.email ??
     "User";
 
+  const notif = useQuery({
+    queryKey: ["notif-unread"],
+    queryFn: () => unreadCount(),
+    enabled: !!user,
+    refetchInterval: 60_000,
+  });
+
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel(`notif:${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["notif-unread"] });
+          queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, queryClient]);
+
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
     queryClient.clear();
     await signOut();
     navigate({ to: "/auth", replace: true });
   };
+
+  const unread = notif.data?.count ?? 0;
 
   return (
     <header className="sticky top-0 z-30 flex h-[72px] items-center gap-3 border-b border-border bg-card px-4 shadow-xs sm:px-6">
@@ -64,8 +99,21 @@ export function AppHeader({ breadcrumbs }: AppHeaderProps) {
             {roles[0]}
           </Badge>
         )}
-        <Button variant="ghost" size="icon" aria-label="Notifications">
-          <Bell className="h-5 w-5" />
+        <Button
+          asChild
+          variant="ghost"
+          size="icon"
+          aria-label="Notifikasi"
+          className="relative"
+        >
+          <Link to="/dashboard/notifications">
+            <Bell className="h-5 w-5" />
+            {unread > 0 ? (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+                {unread > 99 ? "99+" : unread}
+              </span>
+            ) : null}
+          </Link>
         </Button>
         <ThemeToggle />
         <DropdownMenu>
@@ -92,7 +140,15 @@ export function AppHeader({ breadcrumbs }: AppHeaderProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled>
+            <DropdownMenuItem
+              onClick={() =>
+                user &&
+                navigate({
+                  to: "/dashboard/officers/$userId",
+                  params: { userId: user.id },
+                })
+              }
+            >
               <UserIcon className="mr-2 h-4 w-4" />
               Profil
             </DropdownMenuItem>

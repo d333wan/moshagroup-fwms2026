@@ -30,21 +30,29 @@ const mainNav: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
 ];
 
-const placeholderNav: NavItem[] = [
+const moduleNav: NavItem[] = [
   { label: "Penugasan", to: "/dashboard/tasks", icon: ClipboardList },
-  { label: "Petugas Lapangan", to: "/dashboard", icon: Users },
-  { label: "Lokasi", to: "/dashboard", icon: MapPin },
-  { label: "Kendaraan", to: "/dashboard", icon: Truck },
-  { label: "Notifikasi", to: "/dashboard", icon: Bell },
+  { label: "Petugas Lapangan", to: "/dashboard/officers", icon: Users },
+  { label: "Lokasi", to: "/dashboard/locations", icon: MapPin },
+  { label: "Notifikasi", to: "/dashboard/notifications", icon: Bell },
 ];
 
 const systemNav: NavItem[] = [
+  { label: "Kendaraan", to: "/dashboard", icon: Truck },
   { label: "Pengaturan", to: "/dashboard", icon: Settings },
 ];
 
 export function AppSidebar() {
   const { location } = useRouterState();
-  const { isSuperAdmin } = useAuth();
+  const { isSuperAdmin, isAdminTier, isManager } = useAuth();
+  const canManage = isAdminTier || isManager;
+
+  const modules = moduleNav.filter((n) => {
+    if (n.to === "/dashboard/officers" || n.to === "/dashboard/locations") {
+      return canManage;
+    }
+    return true;
+  });
 
   const renderItems = (items: NavItem[]) =>
     items.map((item) => {
@@ -85,7 +93,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Modul</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>{renderItems(placeholderNav)}</SidebarMenu>
+            <SidebarMenu>{renderItems(modules)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
         {isSuperAdmin && (
@@ -109,10 +117,9 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-          v0.2.0 · Phase 2
+          v0.4.0 · Phase 6
         </div>
       </SidebarFooter>
     </Sidebar>
   );
 }
-

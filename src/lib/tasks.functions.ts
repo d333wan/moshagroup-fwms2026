@@ -297,9 +297,26 @@ export const listAssignableUsers = createServerFn({ method: "GET" })
       "list_assignable_users",
     );
     if (error) throw new Error(error.message);
-    return (data ?? []).map((r: any) => ({
-      user_id: r.user_id as string,
-      full_name: (r.full_name as string | null) ?? "",
-      role: r.role as string,
-    }));
+    const rows = (data ?? []) as any[];
+    const ids = rows.map((r) => r.user_id);
+    let profileById = new Map<string, any>();
+    if (ids.length > 0) {
+      const { data: pRows } = await context.supabase
+        .from("profiles")
+        .select("id, phone, job_title")
+        .in("id", ids);
+      profileById = new Map(
+        ((pRows ?? []) as any[]).map((p) => [p.id, p]),
+      );
+    }
+    return rows.map((r) => {
+      const p = profileById.get(r.user_id);
+      return {
+        user_id: r.user_id as string,
+        full_name: (r.full_name as string | null) ?? "",
+        role: r.role as string,
+        phone: (p?.phone as string | null) ?? null,
+        job_title: (p?.job_title as string | null) ?? null,
+      };
+    });
   });

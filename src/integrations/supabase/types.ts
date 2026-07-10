@@ -14,13 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
+      field_officers: {
+        Row: {
+          base_location_id: string | null
+          created_at: string
+          department: string | null
+          notes: string | null
+          skills: string[]
+          status: Database["public"]["Enums"]["officer_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          base_location_id?: string | null
+          created_at?: string
+          department?: string | null
+          notes?: string | null
+          skills?: string[]
+          status?: Database["public"]["Enums"]["officer_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          base_location_id?: string | null
+          created_at?: string
+          department?: string | null
+          notes?: string | null
+          skills?: string[]
+          status?: Database["public"]["Enums"]["officer_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_officers_base_location_id_fkey"
+            columns: ["base_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_officers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          category: string | null
+          city: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          postal_code: string | null
+          province: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          postal_code?: string | null
+          province?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          postal_code?: string | null
+          province?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
+          employee_id: string | null
           full_name: string | null
           id: string
           is_active: boolean
+          job_title: string | null
           last_login_at: string | null
           locked_at: string | null
           must_change_password: boolean
@@ -30,9 +161,11 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          employee_id?: string | null
           full_name?: string | null
           id: string
           is_active?: boolean
+          job_title?: string | null
           last_login_at?: string | null
           locked_at?: string | null
           must_change_password?: boolean
@@ -42,9 +175,11 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          employee_id?: string | null
           full_name?: string | null
           id?: string
           is_active?: boolean
+          job_title?: string | null
           last_login_at?: string | null
           locked_at?: string | null
           must_change_password?: boolean
@@ -78,6 +213,97 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "task_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_report_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          id: string
+          kind: Database["public"]["Enums"]["attachment_kind"]
+          mime_type: string | null
+          report_id: string
+          size_bytes: number | null
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          id?: string
+          kind?: Database["public"]["Enums"]["attachment_kind"]
+          mime_type?: string | null
+          report_id: string
+          size_bytes?: number | null
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["attachment_kind"]
+          mime_type?: string | null
+          report_id?: string
+          size_bytes?: number | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_report_attachments_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "task_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_reports: {
+        Row: {
+          checklist: Json
+          created_at: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          narrative: string | null
+          report_type: Database["public"]["Enums"]["report_type"]
+          reported_at: string
+          reported_by: string
+          task_id: string
+          updated_at: string
+        }
+        Insert: {
+          checklist?: Json
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          narrative?: string | null
+          report_type?: Database["public"]["Enums"]["report_type"]
+          reported_at?: string
+          reported_by: string
+          task_id: string
+          updated_at?: string
+        }
+        Update: {
+          checklist?: Json
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          narrative?: string | null
+          report_type?: Database["public"]["Enums"]["report_type"]
+          reported_at?: string
+          reported_by?: string
+          task_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_reports_task_id_fkey"
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
@@ -130,6 +356,7 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: string
+          location_id: string | null
           location_text: string | null
           priority: Database["public"]["Enums"]["task_priority"]
           status: Database["public"]["Enums"]["task_status"]
@@ -142,6 +369,7 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          location_id?: string | null
           location_text?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
           status?: Database["public"]["Enums"]["task_status"]
@@ -154,13 +382,22 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          location_id?: string | null
           location_text?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
           status?: Database["public"]["Enums"]["task_status"]
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -201,6 +438,10 @@ export type Database = {
         Returns: boolean
       }
       is_admin_tier: { Args: { _user_id: string }; Returns: boolean }
+      is_report_owner: {
+        Args: { _report_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_task_assignee: {
         Args: { _task_id: string; _user_id: string }
         Returns: boolean
@@ -225,6 +466,9 @@ export type Database = {
         | "manager"
         | "petugas_lapangan"
         | "guest"
+      attachment_kind: "photo" | "signature" | "document"
+      officer_status: "available" | "on_duty" | "off_duty" | "leave"
+      report_type: "progress" | "completion" | "issue"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status:
         | "draft"
@@ -367,6 +611,9 @@ export const Constants = {
         "petugas_lapangan",
         "guest",
       ],
+      attachment_kind: ["photo", "signature", "document"],
+      officer_status: ["available", "on_duty", "off_duty", "leave"],
+      report_type: ["progress", "completion", "issue"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: [
         "draft",

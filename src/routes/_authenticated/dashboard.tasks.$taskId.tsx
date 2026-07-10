@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Trash2 } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +41,7 @@ import {
   getTask,
   listAssignableUsers,
 } from "@/lib/tasks.functions";
+import { listReports } from "@/lib/reports.functions";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute(
@@ -70,6 +71,10 @@ function TaskDetailPage() {
     queryKey: ["assignable-users"],
     queryFn: () => listAssignableUsers(),
     enabled: canManage,
+  });
+  const reports = useQuery({
+    queryKey: ["reports", taskId],
+    queryFn: () => listReports({ data: { task_id: taskId } }),
   });
 
   const [newStatus, setNewStatus] = useState<string>("");
@@ -180,6 +185,17 @@ function TaskDetailPage() {
               <ArrowLeft className="h-4 w-4" />
               Kembali
             </Button>
+            {canChangeStatus ? (
+              <Button asChild size="sm">
+                <Link
+                  to="/dashboard/tasks/$taskId/reports/new"
+                  params={{ taskId }}
+                >
+                  <FileText className="h-4 w-4" />
+                  Buat Laporan
+                </Link>
+              </Button>
+            ) : null}
             {canManage ? (
               <Button
                 variant="destructive"
@@ -260,6 +276,52 @@ function TaskDetailPage() {
 
           <Card>
             <CardHeader>
+              <CardTitle className="text-base">Laporan Lapangan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {reports.isLoading ? (
+                <Loading />
+              ) : (reports.data ?? []).length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  Belum ada laporan.
+                </p>
+              ) : (
+                <ul className="space-y-4">
+                  {(reports.data ?? []).map((r: any) => (
+                    <li key={r.id} className="rounded-md border p-3">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <span className="rounded bg-muted px-2 py-0.5 uppercase">
+                          {r.report_type}
+                        </span>
+                        <span>
+                          {new Date(r.reported_at).toLocaleString("id-ID")}
+                        </span>
+                        {r.latitude != null && r.longitude != null ? (
+                          <span>
+                            📍 {Number(r.latitude).toFixed(4)},{" "}
+                            {Number(r.longitude).toFixed(4)}
+                          </span>
+                        ) : null}
+                      </div>
+                      {r.narrative ? (
+                        <p className="mt-2 whitespace-pre-line text-sm">
+                          {r.narrative}
+                        </p>
+                      ) : null}
+                      {(r.attachments ?? []).length > 0 ? (
+                        <div className="mt-2 text-xs text-muted-foreground">
+                          {r.attachments.length} lampiran
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle className="text-base">Riwayat Status</CardTitle>
             </CardHeader>
             <CardContent>
@@ -331,7 +393,8 @@ function TaskDetailPage() {
                             <span className="text-sm">
                               {u.full_name || "(tanpa nama)"}
                               <span className="ml-2 text-xs text-muted-foreground">
-                                {u.role}
+                                {u.job_title ?? u.role}
+                                {u.phone ? ` · ${u.phone}` : ""}
                               </span>
                             </span>
                           </label>
