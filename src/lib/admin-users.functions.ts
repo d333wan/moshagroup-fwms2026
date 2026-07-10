@@ -155,7 +155,12 @@ export const updateUserProfile = createServerFn({ method: "POST" })
       }
     }
 
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      full_name?: string;
+      is_active?: boolean;
+      must_change_password?: boolean;
+      locked_at?: string | null;
+    } = {};
     if (data.full_name !== undefined) patch.full_name = data.full_name;
     if (data.is_active !== undefined) patch.is_active = data.is_active;
     if (data.must_change_password !== undefined)
