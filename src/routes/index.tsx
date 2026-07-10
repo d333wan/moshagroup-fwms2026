@@ -94,7 +94,10 @@ function LandingPage() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <a href="#modul">Pelajari Modul</a>
+              <a href="#download">
+                <Download className="mr-2 h-4 w-4" />
+                Download APK Android
+              </a>
             </Button>
           </div>
         </div>
