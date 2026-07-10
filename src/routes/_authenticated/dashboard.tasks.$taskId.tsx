@@ -72,6 +72,10 @@ function TaskDetailPage() {
     queryFn: () => listAssignableUsers(),
     enabled: canManage,
   });
+  const reports = useQuery({
+    queryKey: ["reports", taskId],
+    queryFn: () => listReports({ data: { task_id: taskId } }),
+  });
 
   const [newStatus, setNewStatus] = useState<string>("");
   const [note, setNote] = useState("");
