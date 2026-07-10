@@ -78,26 +78,6 @@ function LandingPage() {
     <PublicLayout>
       <section className="mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <a
-            href={COMPANY_WEBSITE}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mx-auto mb-6 inline-flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-colors hover:bg-accent"
-          >
-            <img
-              src={COMPANY_LOGO_URL}
-              alt={`${COMPANY_NAME} logo`}
-              className="h-12 w-auto"
-            />
-            <div className="text-left">
-              <p className="text-sm font-semibold text-foreground">
-                {COMPANY_NAME}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Kunjungi website resmi →
-              </p>
-            </div>
-          </a>
 
           <span className="inline-flex items-center rounded-full border border-border bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
             Enterprise · Phase 1 Foundation
