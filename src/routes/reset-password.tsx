@@ -47,9 +47,8 @@ function ResetPasswordPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="new-password">Password Baru</Label>
-                <Input
+                <PasswordInput
                   id="new-password"
-                  type="password"
                   required
                   minLength={8}
                   value={password}
