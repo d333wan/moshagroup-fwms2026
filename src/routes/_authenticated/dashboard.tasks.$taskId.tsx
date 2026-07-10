@@ -185,6 +185,17 @@ function TaskDetailPage() {
               <ArrowLeft className="h-4 w-4" />
               Kembali
             </Button>
+            {canChangeStatus ? (
+              <Button asChild size="sm">
+                <Link
+                  to="/dashboard/tasks/$taskId/reports/new"
+                  params={{ taskId }}
+                >
+                  <FileText className="h-4 w-4" />
+                  Buat Laporan
+                </Link>
+              </Button>
+            ) : null}
             {canManage ? (
               <Button
                 variant="destructive"
