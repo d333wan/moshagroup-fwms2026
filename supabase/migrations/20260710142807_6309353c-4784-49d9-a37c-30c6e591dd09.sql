@@ -1,10 +1,3 @@
--- ============================================================
--- FWMS Phase 2 — Authentication & RBAC
--- Paste this entire file in: Supabase Dashboard → SQL Editor → Run
--- URL: https://supabase.com/dashboard/project/pkxnbazymwetrtckgikg/sql/new
--- Safe to re-run.
--- ============================================================
-
 do $$ begin
   if not exists (select 1 from pg_type where typname = 'app_role') then
     create type public.app_role as enum ('admin', 'manager', 'petugas', 'viewer');
@@ -86,7 +79,3 @@ end $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
   for each row execute function public.handle_new_user();
-
--- After first signup, promote yourself to admin:
---   insert into public.user_roles (user_id, role)
---   values ('<your-auth-user-id-from-auth.users>', 'admin');

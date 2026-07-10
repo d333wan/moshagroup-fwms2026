@@ -8,7 +8,8 @@ import {
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { supabase, type AppRole } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
+import type { AppRole } from "@/lib/roles";
 
 interface AuthContextValue {
   user: User | null;
