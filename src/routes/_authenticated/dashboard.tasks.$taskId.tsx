@@ -43,6 +43,7 @@ import {
 } from "@/lib/tasks.functions";
 import { listReports } from "@/lib/reports.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { AttachmentsPanel } from "@/components/common/attachments-panel";
 
 export const Route = createFileRoute(
   "/_authenticated/dashboard/tasks/$taskId",
