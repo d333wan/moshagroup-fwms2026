@@ -339,7 +339,7 @@ function TaskBlock({
           <div>
             <strong style={{ color: "#111827" }}>Jatuh tempo:</strong>{" "}
             {task.due_date
-              ? new Date(task.due_date).toLocaleString("id-ID")
+              ? new Date(task.due_date).toLocaleDateString("id-ID")
               : "—"}
           </div>
           <div>
