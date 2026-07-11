@@ -193,6 +193,7 @@ const updateInput = z.object({
     title: z.string().min(3).max(200).optional(),
     description: z.string().max(4000).nullable().optional(),
     priority: prioritySchema.optional(),
+    status: statusSchema.optional(),
     due_date: z.string().datetime().nullable().optional(),
     location_text: z.string().max(500).nullable().optional(),
   }),
