@@ -84,6 +84,9 @@ export function AppSidebar() {
     if (n.to === "/dashboard/field-reports/admin") {
       return canManage;
     }
+    if (n.to === "/dashboard/my-work") {
+      return isPetugas;
+    }
     return true;
   });
 
