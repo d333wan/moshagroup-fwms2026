@@ -103,7 +103,7 @@ export const getTask = createServerFn({ method: "GET" })
     const { data: task, error } = await context.supabase
       .from("tasks")
       .select(
-        "id, title, description, priority, status, due_date, location_text, created_by, created_at, updated_at",
+        "id, title, description, priority, status, due_date, location_text, location_id, created_by, created_at, updated_at, radius_meters, supervisor_company_name, supervisor_person_name, supervisor_job_title, supervisor_phone, supervisor_whatsapp, emergency_contact_primary, emergency_contact_secondary, default_vehicle_type, default_license_plate, photo_direction_mode",
       )
       .eq("id", data.id)
       .maybeSingle();
