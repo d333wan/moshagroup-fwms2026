@@ -52,8 +52,12 @@ const upsertInput = z.object({
   latitude: z.number().finite().nullable().optional(),
   longitude: z.number().finite().nullable().optional(),
   category: z.string().max(50).optional().nullable(),
+  pic: z.string().max(200).optional().nullable(),
+  notes: z.string().max(2000).optional().nullable(),
+  photos: z.array(z.string().max(500)).max(4).optional(),
   is_active: z.boolean().default(true),
 });
+
 
 export const upsertLocation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
