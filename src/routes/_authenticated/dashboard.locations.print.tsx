@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/common/loading";
 import { EmptyState } from "@/components/common/empty-state";
 import { listLocations } from "@/lib/locations.functions";
+import { printWithFilename } from "@/lib/print-filename";
+
 import { supabase } from "@/integrations/supabase/client";
 import {
   COMPANY_ADDRESS,
