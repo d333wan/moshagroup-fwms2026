@@ -209,12 +209,54 @@ function NewTaskPage() {
 
             <div className="grid gap-2">
               <Label htmlFor="loc">Lokasi</Label>
-              <Input
-                id="loc"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Alamat / titik kerja"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="loc"
+                  value={location}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                    setSelectedLoc(null);
+                  }}
+                  placeholder="Pilih dari data lokasi atau ketik manual"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setLocPickerOpen(true)}
+                >
+                  <MapPin className="h-4 w-4" />
+                  Pilih Lokasi
+                </Button>
+              </div>
+              {selectedLoc ? (
+                <div className="rounded-md border bg-muted/40 p-3 text-sm">
+                  <div className="font-medium">{selectedLoc.name}</div>
+                  <div className="mt-1 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                    <div>
+                      <span className="font-medium text-foreground">Alamat: </span>
+                      {[selectedLoc.address, selectedLoc.city, selectedLoc.province, selectedLoc.postal_code]
+                        .filter(Boolean)
+                        .join(", ") || "—"}
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">PIC: </span>
+                      {selectedLoc.pic || "—"}
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Koordinat: </span>
+                      {selectedLoc.latitude != null && selectedLoc.longitude != null
+                        ? `${Number(selectedLoc.latitude).toFixed(6)}, ${Number(selectedLoc.longitude).toFixed(6)}`
+                        : "—"}
+                    </div>
+                    {selectedLoc.category ? (
+                      <div>
+                        <span className="font-medium text-foreground">Kategori: </span>
+                        {selectedLoc.category}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <div className="grid gap-2">
