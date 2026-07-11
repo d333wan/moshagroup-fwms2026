@@ -241,16 +241,12 @@ function NewTaskPage() {
       </Card>
       <style>{`
         .due-calendar-input::-webkit-calendar-picker-indicator {
-          width: 32px;
-          height: 32px;
-          min-width: 32px;
-          min-height: 32px;
-          cursor: pointer;
-          opacity: 1;
-          filter: brightness(1.6) saturate(1.8);
+          display: none;
+          -webkit-appearance: none;
+          appearance: none;
         }
-        .due-calendar-input::-webkit-calendar-picker-indicator:hover {
-          opacity: 0.85;
+        .due-calendar-input::-moz-calendar-picker-indicator {
+          display: none;
         }
       `}</style>
     </DashboardLayout>
