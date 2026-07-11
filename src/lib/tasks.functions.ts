@@ -140,6 +140,7 @@ const createInput = z.object({
   status: statusSchema.default("draft"),
   due_date: z.string().datetime().optional().nullable(),
   location_text: z.string().max(500).optional().nullable(),
+  location_id: z.string().uuid().optional().nullable(),
   assignee_ids: z.array(z.string().uuid()).default([]),
 });
 
@@ -164,6 +165,7 @@ export const createTask = createServerFn({ method: "POST" })
         status: initialStatus,
         due_date: data.due_date ?? null,
         location_text: data.location_text ?? null,
+        location_id: data.location_id ?? null,
         created_by: context.userId,
       })
       .select("id")
