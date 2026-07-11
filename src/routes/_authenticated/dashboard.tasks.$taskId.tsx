@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, FileText, Printer, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Pencil, Printer, Trash2 } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -197,6 +197,17 @@ function TaskDetailPage() {
               </Button>
             ) : null}
             {canManage ? (
+              <Button asChild variant="outline" size="sm">
+                <Link
+                  to="/dashboard/tasks/$taskId/edit"
+                  params={{ taskId }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
+            ) : null}
+            {canManage ? (
               <Button
                 variant="destructive"
                 size="sm"
@@ -236,6 +247,24 @@ function TaskDetailPage() {
               <div>
                 <div className="text-xs text-muted-foreground">Lokasi</div>
                 <div className="mt-1">{t.location_text ?? "—"}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Dibuat</div>
+                <div className="mt-1">
+                  {t.created_at
+                    ? new Date(t.created_at).toLocaleString("id-ID")
+                    : "—"}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">
+                  Terakhir Diubah
+                </div>
+                <div className="mt-1">
+                  {t.updated_at
+                    ? new Date(t.updated_at).toLocaleString("id-ID")
+                    : "—"}
+                </div>
               </div>
             </CardContent>
           </Card>
