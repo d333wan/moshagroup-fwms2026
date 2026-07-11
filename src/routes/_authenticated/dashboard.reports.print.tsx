@@ -97,7 +97,7 @@ function PrintReportsPage() {
           actions={
             <Button
               size="sm"
-              onClick={() => window.print()}
+              onClick={() => printWithFilename("Laporan-Lapangan")}
               disabled={total === 0}
             >
               <Printer className="h-4 w-4" />
