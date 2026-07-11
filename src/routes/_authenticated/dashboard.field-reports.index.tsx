@@ -70,7 +70,7 @@ function FieldReportsPage() {
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-4">
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-4">
         <Kpi label="Tugas Aktif" value={kpi.active} icon={FileText} />
         <Kpi label="Laporan Hari Ini" value={kpi.today} icon={Send} />
         <Kpi label="Draft" value={kpi.draft} icon={FileText} />
