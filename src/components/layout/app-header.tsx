@@ -85,7 +85,7 @@ export function AppHeader({ breadcrumbs }: AppHeaderProps) {
   const unread = notif.data?.count ?? 0;
 
   return (
-    <header className="sticky top-0 z-30 flex h-[72px] items-center gap-3 border-b border-border bg-card px-4 shadow-xs sm:px-6">
+    <header data-app-header className="app-header sticky top-0 z-30 flex h-[72px] items-center gap-3 border-b border-border bg-card px-4 shadow-xs sm:px-6">
       <SidebarTrigger />
       <Separator orientation="vertical" className="h-6" />
       <div className="hidden md:block">

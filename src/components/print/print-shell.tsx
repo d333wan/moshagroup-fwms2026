@@ -123,17 +123,36 @@ export function PrintStyles({ landscape = false }: { landscape?: boolean }) {
       @media print {
         @page { size: A4 ${landscape ? "landscape" : "portrait"}; margin: 12mm 12mm 16mm; }
         html, body { background: #ffffff !important; }
-        .no-print, [data-sidebar], header[data-app-header], nav[aria-label="Breadcrumb"] { display: none !important; }
-        main { padding: 0 !important; }
+        .no-print, [data-sidebar], header[data-app-header], .app-header, nav[aria-label="Breadcrumb"] { display: none !important; }
+        main { padding: 0 !important; background: #ffffff !important; }
 
         .print-page {
           box-shadow: none !important; border: 0 !important; border-radius: 0 !important;
           margin: 0 !important; padding: 0 !important; max-width: none !important; min-height: 0 !important;
         }
         .print-card { box-shadow: none !important; }
-        .print-cover { min-height: 240mm; break-after: page; page-break-after: always; }
+        .print-cover {
+          min-height: 0 !important;
+          padding: 8px !important;
+          display: block !important;
+          break-after: page;
+          page-break-after: always;
+        }
+        .print-cover .band { margin-bottom: 8px; height: 6px; }
+        .print-cover .logo { height: 48px; margin-bottom: 6px; }
+        .print-cover .company { font-size: 14px; }
+        .print-cover .company-addr { font-size: 9px; max-width: 360px; }
+        .print-cover .doc-title { margin-top: 10px; font-size: 18px; }
+        .print-cover .doc-sub { margin-top: 2px; font-size: 11px; }
+        .print-cover .stats { margin-top: 10px; max-width: 420px; gap: 8px; }
+        .print-cover .stat { padding: 6px 4px; }
+        .print-cover .stat .n { font-size: 14px; }
+        .print-cover .stat .l { font-size: 9px; }
+        .print-cover .kv { margin-top: 10px; padding-top: 8px; max-width: 360px; gap: 4px 12px; font-size: 11px; }
         .page-break { break-before: page; page-break-before: always; }
         .avoid-break, .print-card, .task-block, .report-card, .loc-block { break-inside: avoid; page-break-inside: avoid; }
+        table { font-size: 12px; }
+        th, td { padding: 6px 8px !important; }
         thead { display: table-header-group; }
         tr, img { break-inside: avoid; page-break-inside: avoid; }
       }
