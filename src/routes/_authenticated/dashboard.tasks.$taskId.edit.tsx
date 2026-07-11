@@ -5,11 +5,12 @@ import { toast } from "sonner";
 import { ArrowLeft, Save } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -18,10 +19,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loading } from "@/components/common/loading";
-import { getTask, updateTask } from "@/lib/tasks.functions";
+import {
+  assignTask,
+  getTask,
+  listAssignableUsers,
+  updateTask,
+} from "@/lib/tasks.functions";
 import {
   TASK_PRIORITY_LABEL,
   TASK_PRIORITY_VALUES,
+  TASK_STATUS_LABEL,
+  TASK_STATUS_VALUES,
 } from "@/components/tasks/task-badges";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -58,12 +66,21 @@ function TaskEditPage() {
     queryKey: ["tasks", taskId],
     queryFn: () => getTask({ data: { id: taskId } }),
   });
+  const users = useQuery({
+    queryKey: ["assignable-users"],
+    queryFn: () => listAssignableUsers(),
+    enabled: canManage,
+  });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<string>("medium");
+  const [status, setStatus] = useState<string>("draft");
   const [dueDate, setDueDate] = useState<string>("");
   const [locationText, setLocationText] = useState("");
+  const [assignees, setAssignees] = useState<string[]>([]);
+  const [initialStatus, setInitialStatus] = useState<string>("draft");
+  const [initialAssignees, setInitialAssignees] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -72,26 +89,44 @@ function TaskEditPage() {
       setTitle(t.title ?? "");
       setDescription(t.description ?? "");
       setPriority(t.priority ?? "medium");
+      setStatus(t.status ?? "draft");
+      setInitialStatus(t.status ?? "draft");
       setDueDate(toDateInputValue(t.due_date ?? null));
       setLocationText(t.location_text ?? "");
+      const a = (detail.data.assignments ?? []).map(
+        (x: any) => x.assignee_id as string,
+      );
+      setAssignees(a);
+      setInitialAssignees(a);
       setReady(true);
     }
   }, [detail.data, ready]);
 
   const mut = useMutation({
-    mutationFn: () =>
-      updateTask({
+    mutationFn: async () => {
+      await updateTask({
         data: {
           id: taskId,
           patch: {
             title: title.trim(),
             description: description.trim() ? description.trim() : null,
             priority: priority as any,
+            status: status as any,
             due_date: dueDate ? new Date(dueDate).toISOString() : null,
             location_text: locationText.trim() ? locationText.trim() : null,
           },
         },
-      }),
+      });
+      const sameAssignees =
+        assignees.length === initialAssignees.length &&
+        assignees.every((id) => initialAssignees.includes(id));
+      if (!sameAssignees) {
+        await assignTask({
+          data: { task_id: taskId, assignee_ids: assignees },
+        });
+      }
+      return { ok: true };
+    },
     onSuccess: () => {
       toast.success("Tugas diperbarui");
       qc.invalidateQueries({ queryKey: ["tasks"] });
@@ -125,6 +160,8 @@ function TaskEditPage() {
       </DashboardLayout>
     );
   }
+
+  const t = detail.data!.task;
 
   return (
     <DashboardLayout breadcrumbs={breadcrumbs}>
@@ -184,7 +221,23 @@ function TaskEditPage() {
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger id="status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TASK_STATUS_VALUES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {TASK_STATUS_LABEL[s]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="priority">Prioritas</Label>
                 <Select value={priority} onValueChange={setPriority}>
@@ -221,6 +274,59 @@ function TaskEditPage() {
                 maxLength={500}
                 placeholder="Alamat / nama lokasi"
               />
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Petugas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {users.isLoading ? (
+                  <Loading />
+                ) : (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {(users.data ?? []).map((u) => {
+                      const checked = assignees.includes(u.user_id);
+                      return (
+                        <label
+                          key={u.user_id}
+                          className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-accent"
+                        >
+                          <Checkbox
+                            checked={checked}
+                            onCheckedChange={(v) => {
+                              setAssignees((prev) =>
+                                v
+                                  ? [...prev, u.user_id]
+                                  : prev.filter((id) => id !== u.user_id),
+                              );
+                            }}
+                          />
+                          <span className="text-sm">
+                            {u.full_name || "(tanpa nama)"}
+                            <span className="ml-2 text-xs text-muted-foreground">
+                              {u.job_title ?? u.role}
+                              {u.phone ? ` · ${u.phone}` : ""}
+                            </span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <div className="text-xs text-muted-foreground">
+              Terakhir diubah:{" "}
+              {t.updated_at
+                ? new Date(t.updated_at).toLocaleString("id-ID")
+                : "—"}
+              {status !== initialStatus ? (
+                <span className="ml-2 text-primary">
+                  · Perubahan status akan dicatat di riwayat
+                </span>
+              ) : null}
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
