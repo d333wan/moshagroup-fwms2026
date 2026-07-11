@@ -248,6 +248,24 @@ function TaskDetailPage() {
                 <div className="text-xs text-muted-foreground">Lokasi</div>
                 <div className="mt-1">{t.location_text ?? "—"}</div>
               </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Dibuat</div>
+                <div className="mt-1">
+                  {t.created_at
+                    ? new Date(t.created_at).toLocaleString("id-ID")
+                    : "—"}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">
+                  Terakhir Diubah
+                </div>
+                <div className="mt-1">
+                  {t.updated_at
+                    ? new Date(t.updated_at).toLocaleString("id-ID")
+                    : "—"}
+                </div>
+              </div>
             </CardContent>
           </Card>
 
