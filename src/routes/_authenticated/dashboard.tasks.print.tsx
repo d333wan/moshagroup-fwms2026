@@ -323,7 +323,7 @@ function PrintAssignmentsPage() {
         )}
       </div>
 
-      <PrintStyles />
+      <PrintStyles landscape />
     </DashboardLayout>
   );
 }
