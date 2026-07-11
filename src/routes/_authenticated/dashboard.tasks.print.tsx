@@ -36,8 +36,6 @@ import {
   StatusBadge,
 } from "@/components/print/print-shell";
 import {
-  TaskPriorityBadge,
-  TaskStatusBadge,
   TASK_PRIORITY_LABEL,
   TASK_STATUS_LABEL,
   TASK_PRIORITY_VALUES,
