@@ -77,9 +77,9 @@ export function AppHeader({ breadcrumbs }: AppHeaderProps) {
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
-    queryClient.clear();
     await signOut();
     navigate({ to: "/auth", replace: true });
+    queryClient.clear();
   };
 
   const unread = notif.data?.count ?? 0;
