@@ -31,6 +31,7 @@ import { Route as AuthenticatedDashboardTasksTaskIdRouteImport } from './routes/
 import { Route as AuthenticatedDashboardReportsPrintRouteImport } from './routes/_authenticated/dashboard.reports.print'
 import { Route as AuthenticatedDashboardOfficersPrintRouteImport } from './routes/_authenticated/dashboard.officers.print'
 import { Route as AuthenticatedDashboardOfficersUserIdRouteImport } from './routes/_authenticated/dashboard.officers.$userId'
+import { Route as AuthenticatedDashboardLocationsPrintRouteImport } from './routes/_authenticated/dashboard.locations.print'
 import { Route as AuthenticatedDashboardLocationsLocationIdRouteImport } from './routes/_authenticated/dashboard.locations.$locationId'
 import { Route as AuthenticatedDashboardTasksTaskIdReportsNewRouteImport } from './routes/_authenticated/dashboard.tasks.$taskId.reports.new'
 
@@ -158,6 +159,12 @@ const AuthenticatedDashboardOfficersUserIdRoute =
     path: '/$userId',
     getParentRoute: () => AuthenticatedDashboardOfficersRoute,
   } as any)
+const AuthenticatedDashboardLocationsPrintRoute =
+  AuthenticatedDashboardLocationsPrintRouteImport.update({
+    id: '/print',
+    path: '/print',
+    getParentRoute: () => AuthenticatedDashboardLocationsRoute,
+  } as any)
 const AuthenticatedDashboardLocationsLocationIdRoute =
   AuthenticatedDashboardLocationsLocationIdRouteImport.update({
     id: '/$locationId',
@@ -186,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/locations/$locationId': typeof AuthenticatedDashboardLocationsLocationIdRoute
+  '/dashboard/locations/print': typeof AuthenticatedDashboardLocationsPrintRoute
   '/dashboard/officers/$userId': typeof AuthenticatedDashboardOfficersUserIdRoute
   '/dashboard/officers/print': typeof AuthenticatedDashboardOfficersPrintRoute
   '/dashboard/reports/print': typeof AuthenticatedDashboardReportsPrintRoute
@@ -207,6 +215,7 @@ export interface FileRoutesByTo {
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/locations/$locationId': typeof AuthenticatedDashboardLocationsLocationIdRoute
+  '/dashboard/locations/print': typeof AuthenticatedDashboardLocationsPrintRoute
   '/dashboard/officers/$userId': typeof AuthenticatedDashboardOfficersUserIdRoute
   '/dashboard/officers/print': typeof AuthenticatedDashboardOfficersPrintRoute
   '/dashboard/reports/print': typeof AuthenticatedDashboardReportsPrintRoute
@@ -234,6 +243,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/locations/$locationId': typeof AuthenticatedDashboardLocationsLocationIdRoute
+  '/_authenticated/dashboard/locations/print': typeof AuthenticatedDashboardLocationsPrintRoute
   '/_authenticated/dashboard/officers/$userId': typeof AuthenticatedDashboardOfficersUserIdRoute
   '/_authenticated/dashboard/officers/print': typeof AuthenticatedDashboardOfficersPrintRoute
   '/_authenticated/dashboard/reports/print': typeof AuthenticatedDashboardReportsPrintRoute
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/dashboard/users'
     | '/dashboard/'
     | '/dashboard/locations/$locationId'
+    | '/dashboard/locations/print'
     | '/dashboard/officers/$userId'
     | '/dashboard/officers/print'
     | '/dashboard/reports/print'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/dashboard/users'
     | '/dashboard'
     | '/dashboard/locations/$locationId'
+    | '/dashboard/locations/print'
     | '/dashboard/officers/$userId'
     | '/dashboard/officers/print'
     | '/dashboard/reports/print'
@@ -308,6 +320,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/users'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/locations/$locationId'
+    | '/_authenticated/dashboard/locations/print'
     | '/_authenticated/dashboard/officers/$userId'
     | '/_authenticated/dashboard/officers/print'
     | '/_authenticated/dashboard/reports/print'
@@ -484,6 +497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardOfficersUserIdRouteImport
       parentRoute: typeof AuthenticatedDashboardOfficersRoute
     }
+    '/_authenticated/dashboard/locations/print': {
+      id: '/_authenticated/dashboard/locations/print'
+      path: '/print'
+      fullPath: '/dashboard/locations/print'
+      preLoaderRoute: typeof AuthenticatedDashboardLocationsPrintRouteImport
+      parentRoute: typeof AuthenticatedDashboardLocationsRoute
+    }
     '/_authenticated/dashboard/locations/$locationId': {
       id: '/_authenticated/dashboard/locations/$locationId'
       path: '/$locationId'
@@ -503,6 +523,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedDashboardLocationsRouteChildren {
   AuthenticatedDashboardLocationsLocationIdRoute: typeof AuthenticatedDashboardLocationsLocationIdRoute
+  AuthenticatedDashboardLocationsPrintRoute: typeof AuthenticatedDashboardLocationsPrintRoute
   AuthenticatedDashboardLocationsIndexRoute: typeof AuthenticatedDashboardLocationsIndexRoute
 }
 
@@ -510,6 +531,8 @@ const AuthenticatedDashboardLocationsRouteChildren: AuthenticatedDashboardLocati
   {
     AuthenticatedDashboardLocationsLocationIdRoute:
       AuthenticatedDashboardLocationsLocationIdRoute,
+    AuthenticatedDashboardLocationsPrintRoute:
+      AuthenticatedDashboardLocationsPrintRoute,
     AuthenticatedDashboardLocationsIndexRoute:
       AuthenticatedDashboardLocationsIndexRoute,
   }
