@@ -362,6 +362,40 @@ function TaskDetailPage() {
 
           <Card>
             <CardHeader>
+              <CardTitle className="text-base">Dokumen Penugasan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AttachmentsPanel
+                scope="task"
+                parentId={taskId}
+                canUpload={canManage}
+                canDelete={canManage}
+                emptyText="Belum ada surat tugas / dokumen lain yang diunggah."
+              />
+            </CardContent>
+          </Card>
+
+          {t.location_id ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">
+                  Dokumen Lokasi
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AttachmentsPanel
+                  scope="location"
+                  parentId={t.location_id}
+                  canUpload={canManage}
+                  canDelete={canManage}
+                  emptyText="Belum ada dokumen di lokasi ini."
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          <Card>
+            <CardHeader>
               <CardTitle className="text-base">Riwayat Status</CardTitle>
             </CardHeader>
             <CardContent>
