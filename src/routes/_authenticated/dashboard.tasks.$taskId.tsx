@@ -229,7 +229,7 @@ function TaskDetailPage() {
                 <div className="text-xs text-muted-foreground">Jatuh Tempo</div>
                 <div className="mt-1">
                   {t.due_date
-                    ? new Date(t.due_date).toLocaleString("id-ID")
+                    ? new Date(t.due_date).toLocaleDateString("id-ID")
                     : "—"}
                 </div>
               </div>
