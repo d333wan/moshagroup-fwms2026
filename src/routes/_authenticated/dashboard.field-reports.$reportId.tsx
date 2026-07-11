@@ -17,6 +17,7 @@ import {
   FIELD_REPORT_STATUS_LABEL,
   FIELD_WORK_STATUS_LABEL,
 } from "@/lib/field-reports.functions";
+import { AttachmentsPanel } from "@/components/common/attachments-panel";
 
 export const Route = createFileRoute(
   "/_authenticated/dashboard/field-reports/$reportId",
