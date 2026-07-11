@@ -71,7 +71,7 @@ function DashboardHome() {
       breadcrumbs={[{ label: "Home", to: "/" }, { label: "Dashboard" }]}
     >
       <PageHeader
-        title={`Selamat datang, ${displayName}`}
+        title={`Login :\u00a0 ${displayName}`}
         description={
           roles.length > 0
             ? `Peran aktif: ${roles.join(", ")}.`
