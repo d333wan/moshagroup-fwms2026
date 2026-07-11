@@ -62,6 +62,210 @@ export type Database = {
           },
         ]
       }
+      field_report_comments: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          report_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          report_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          report_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_report_comments_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "field_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_report_comments_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      field_report_photos: {
+        Row: {
+          caption: string | null
+          capture_source: Database["public"]["Enums"]["field_photo_source"]
+          captured_at: string
+          created_at: string
+          direction_label: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          photo_type: Database["public"]["Enums"]["field_photo_type"]
+          report_id: string
+          storage_path: string
+        }
+        Insert: {
+          caption?: string | null
+          capture_source?: Database["public"]["Enums"]["field_photo_source"]
+          captured_at?: string
+          created_at?: string
+          direction_label?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          photo_type: Database["public"]["Enums"]["field_photo_type"]
+          report_id: string
+          storage_path: string
+        }
+        Update: {
+          caption?: string | null
+          capture_source?: Database["public"]["Enums"]["field_photo_source"]
+          captured_at?: string
+          created_at?: string
+          direction_label?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          photo_type?: Database["public"]["Enums"]["field_photo_type"]
+          report_id?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_report_photos_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "field_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      field_reports: {
+        Row: {
+          assistance_needed: string | null
+          created_at: string
+          distance_from_target: number | null
+          gps_accuracy: number | null
+          gps_source: Database["public"]["Enums"]["field_gps_source"]
+          has_obstacle: boolean
+          id: string
+          latitude: number | null
+          license_plate: string | null
+          longitude: number | null
+          obstacle_description: string | null
+          officer_id: string
+          progress_percent: number
+          report_date: string
+          report_number: string
+          report_time: string
+          status: Database["public"]["Enums"]["field_report_status"]
+          submitted_at: string | null
+          task_id: string
+          updated_at: string
+          vehicle_change_reason: string | null
+          vehicle_type: string | null
+          verification_note: string | null
+          verified_at: string | null
+          verified_by: string | null
+          within_radius: boolean | null
+          work_description: string | null
+          work_status: Database["public"]["Enums"]["field_work_status"]
+        }
+        Insert: {
+          assistance_needed?: string | null
+          created_at?: string
+          distance_from_target?: number | null
+          gps_accuracy?: number | null
+          gps_source?: Database["public"]["Enums"]["field_gps_source"]
+          has_obstacle?: boolean
+          id?: string
+          latitude?: number | null
+          license_plate?: string | null
+          longitude?: number | null
+          obstacle_description?: string | null
+          officer_id: string
+          progress_percent?: number
+          report_date?: string
+          report_number?: string
+          report_time?: string
+          status?: Database["public"]["Enums"]["field_report_status"]
+          submitted_at?: string | null
+          task_id: string
+          updated_at?: string
+          vehicle_change_reason?: string | null
+          vehicle_type?: string | null
+          verification_note?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+          within_radius?: boolean | null
+          work_description?: string | null
+          work_status?: Database["public"]["Enums"]["field_work_status"]
+        }
+        Update: {
+          assistance_needed?: string | null
+          created_at?: string
+          distance_from_target?: number | null
+          gps_accuracy?: number | null
+          gps_source?: Database["public"]["Enums"]["field_gps_source"]
+          has_obstacle?: boolean
+          id?: string
+          latitude?: number | null
+          license_plate?: string | null
+          longitude?: number | null
+          obstacle_description?: string | null
+          officer_id?: string
+          progress_percent?: number
+          report_date?: string
+          report_number?: string
+          report_time?: string
+          status?: Database["public"]["Enums"]["field_report_status"]
+          submitted_at?: string | null
+          task_id?: string
+          updated_at?: string
+          vehicle_change_reason?: string | null
+          vehicle_type?: string | null
+          verification_note?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+          within_radius?: boolean | null
+          work_description?: string | null
+          work_status?: Database["public"]["Enums"]["field_work_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_reports_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_reports_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null
@@ -371,39 +575,72 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string
+          default_license_plate: string | null
+          default_vehicle_type: string | null
           description: string | null
           due_date: string | null
+          emergency_contact_primary: string | null
+          emergency_contact_secondary: string | null
           id: string
           location_id: string | null
           location_text: string | null
+          photo_direction_mode: Database["public"]["Enums"]["task_photo_direction_mode"]
           priority: Database["public"]["Enums"]["task_priority"]
+          radius_meters: number
           status: Database["public"]["Enums"]["task_status"]
+          supervisor_company_name: string | null
+          supervisor_job_title: string | null
+          supervisor_person_name: string | null
+          supervisor_phone: string | null
+          supervisor_whatsapp: string | null
           title: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           created_by: string
+          default_license_plate?: string | null
+          default_vehicle_type?: string | null
           description?: string | null
           due_date?: string | null
+          emergency_contact_primary?: string | null
+          emergency_contact_secondary?: string | null
           id?: string
           location_id?: string | null
           location_text?: string | null
+          photo_direction_mode?: Database["public"]["Enums"]["task_photo_direction_mode"]
           priority?: Database["public"]["Enums"]["task_priority"]
+          radius_meters?: number
           status?: Database["public"]["Enums"]["task_status"]
+          supervisor_company_name?: string | null
+          supervisor_job_title?: string | null
+          supervisor_person_name?: string | null
+          supervisor_phone?: string | null
+          supervisor_whatsapp?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           created_by?: string
+          default_license_plate?: string | null
+          default_vehicle_type?: string | null
           description?: string | null
           due_date?: string | null
+          emergency_contact_primary?: string | null
+          emergency_contact_secondary?: string | null
           id?: string
           location_id?: string | null
           location_text?: string | null
+          photo_direction_mode?: Database["public"]["Enums"]["task_photo_direction_mode"]
           priority?: Database["public"]["Enums"]["task_priority"]
+          radius_meters?: number
           status?: Database["public"]["Enums"]["task_status"]
+          supervisor_company_name?: string | null
+          supervisor_job_title?: string | null
+          supervisor_person_name?: string | null
+          supervisor_phone?: string | null
+          supervisor_whatsapp?: string | null
           title?: string
           updated_at?: string
         }
@@ -445,6 +682,7 @@ export type Database = {
     Functions: {
       check_account_locked: { Args: { _email: string }; Returns: boolean }
       count_active_super_admins: { Args: never; Returns: number }
+      generate_field_report_number: { Args: never; Returns: string }
       get_user_roles: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -488,8 +726,31 @@ export type Database = {
         | "petugas_lapangan"
         | "guest"
       attachment_kind: "photo" | "signature" | "document"
+      field_gps_source: "device" | "external"
+      field_photo_source: "camera" | "gallery" | "upload"
+      field_photo_type:
+        | "officer_selfie"
+        | "location"
+        | "location_direction"
+        | "physical_condition"
+        | "gps_evidence"
+        | "vehicle"
+        | "obstacle"
+      field_report_status:
+        | "draft"
+        | "submitted"
+        | "needs_revision"
+        | "approved"
+        | "rejected"
+      field_work_status:
+        | "not_started"
+        | "arrived"
+        | "in_progress"
+        | "delayed"
+        | "completed"
       officer_status: "available" | "on_duty" | "off_duty" | "leave"
       report_type: "progress" | "completion" | "issue"
+      task_photo_direction_mode: "none" | "single" | "four_way"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status:
         | "draft"
@@ -633,8 +894,34 @@ export const Constants = {
         "guest",
       ],
       attachment_kind: ["photo", "signature", "document"],
+      field_gps_source: ["device", "external"],
+      field_photo_source: ["camera", "gallery", "upload"],
+      field_photo_type: [
+        "officer_selfie",
+        "location",
+        "location_direction",
+        "physical_condition",
+        "gps_evidence",
+        "vehicle",
+        "obstacle",
+      ],
+      field_report_status: [
+        "draft",
+        "submitted",
+        "needs_revision",
+        "approved",
+        "rejected",
+      ],
+      field_work_status: [
+        "not_started",
+        "arrived",
+        "in_progress",
+        "delayed",
+        "completed",
+      ],
       officer_status: ["available", "on_duty", "off_duty", "leave"],
       report_type: ["progress", "completion", "issue"],
+      task_photo_direction_mode: ["none", "single", "four_way"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: [
         "draft",
