@@ -107,7 +107,13 @@ function MyWorkPage() {
             : "Ringkasan penugasan & laporan pribadi Anda."
         }
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link to="/dashboard/reports/print">
+                <Download className="h-4 w-4" />
+                Unduh PDF Laporan
+              </Link>
+            </Button>
             <UserCheck className="h-4 w-4 text-muted-foreground" />
             <Select
               value={data?.officer.status ?? "off_duty"}
