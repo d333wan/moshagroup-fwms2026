@@ -90,15 +90,22 @@ function FieldReportsPage() {
             (myTasks.data ?? [])
               .filter((t: any) => t.status !== "completed" && t.status !== "cancelled")
               .map((t: any) => (
-                <div key={t.id} className="flex items-center justify-between gap-3 rounded-md border p-3">
-                  <div className="min-w-0">
-                    <div className="truncate font-medium">{t.title}</div>
-                    <div className="truncate text-xs text-muted-foreground">
+                <div
+                  key={t.id}
+                  className="flex flex-col gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="break-words font-medium text-sm sm:text-base">{t.title}</div>
+                    <div className="break-words text-xs text-muted-foreground sm:text-sm">
                       <MapPin className="inline h-3 w-3" /> {t.location_text ?? "—"}
                     </div>
                   </div>
-                  <Link to="/dashboard/field-reports/new/$taskId" params={{ taskId: t.id }}>
-                    <Button size="sm" variant="secondary">
+                  <Link
+                    to="/dashboard/field-reports/new/$taskId"
+                    params={{ taskId: t.id }}
+                    className="w-full sm:w-auto shrink-0"
+                  >
+                    <Button size="sm" variant="secondary" className="w-full sm:w-auto">
                       <Plus className="h-4 w-4" /> Buat Laporan
                     </Button>
                   </Link>
