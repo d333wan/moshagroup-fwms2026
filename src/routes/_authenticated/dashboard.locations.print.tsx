@@ -9,13 +9,14 @@ import { Loading } from "@/components/common/loading";
 import { EmptyState } from "@/components/common/empty-state";
 import { listLocations } from "@/lib/locations.functions";
 import { printWithFilename } from "@/lib/print-filename";
-
+import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  COMPANY_ADDRESS,
-  COMPANY_LOGO_URL,
-  COMPANY_NAME,
-} from "@/lib/company";
+  PrintStyles,
+  PrintDocHeader,
+  PrintDocFooter,
+  PrintCover,
+} from "@/components/print/print-shell";
 
 const BUCKET = "location-photos";
 
@@ -32,12 +33,15 @@ export const Route = createFileRoute(
 });
 
 function PrintLocationsPage() {
+  const { user } = useAuth();
   const q = useQuery({
     queryKey: ["locations"],
     queryFn: () => listLocations(),
   });
 
   const rows = (q.data ?? []) as any[];
+  const generatedBy =
+    (user?.user_metadata as any)?.full_name || user?.email || "—";
 
   const allPaths = useMemo(() => {
     const s = new Set<string>();
@@ -64,6 +68,10 @@ function PrintLocationsPage() {
       cancelled = true;
     };
   }, [allPaths]);
+
+  const withPhotos = rows.filter((r) => (r.photos ?? []).length > 0).length;
+  const cities = new Set(rows.map((r) => r.city).filter(Boolean)).size;
+  const categories = new Set(rows.map((r) => r.category).filter(Boolean)).size;
 
   return (
     <DashboardLayout
@@ -99,62 +107,59 @@ function PrintLocationsPage() {
         />
       </div>
 
-      <div className="print-area">
-        <div className="mb-4 flex items-start justify-between border-b pb-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={COMPANY_LOGO_URL}
-              alt="Logo"
-              className="h-12 w-auto"
-              crossOrigin="anonymous"
-            />
-            <div>
-              <div className="text-base font-bold">{COMPANY_NAME}</div>
-              <div className="text-xs text-muted-foreground">
-                {COMPANY_ADDRESS}
-              </div>
-            </div>
-          </div>
-          <div className="text-right text-xs">
-            <div className="font-semibold">Daftar Lokasi Kerja</div>
-            <div>Dicetak: {new Date().toLocaleString("id-ID")}</div>
-            <div>Total: {rows.length} lokasi</div>
-          </div>
+      <div className="print-area print-doc">
+        <div className="print-page">
+          <PrintCover
+            title="Daftar Lokasi Kerja"
+            subtitle="Field Work Management System"
+            generatedBy={generatedBy}
+            stats={[
+              { label: "Total Lokasi", value: rows.length },
+              { label: "Dengan Foto", value: withPhotos },
+              { label: "Kota", value: cities },
+              { label: "Kategori", value: categories },
+              {
+                label: "Ber-koordinat",
+                value: rows.filter((r) => r.latitude != null && r.longitude != null).length,
+              },
+              { label: "Dokumen", value: 1 },
+            ]}
+          />
         </div>
 
-        {q.isLoading ? (
-          <div className="no-print">
-            <Loading />
-          </div>
-        ) : rows.length === 0 ? (
-          <EmptyState
-            title="Belum ada lokasi"
-            description="Tambahkan lokasi terlebih dahulu."
+        <div className="print-page">
+          <PrintDocHeader
+            title="Daftar Lokasi Kerja"
+            subtitle={`Total: ${rows.length} lokasi`}
           />
-        ) : (
-          <div className="grid gap-4">
-            {rows.map((l, i) => (
-              <LocationBlock
-                key={l.id}
-                index={i + 1}
-                loc={l}
-                signed={signed}
-              />
-            ))}
-          </div>
-        )}
+
+          {q.isLoading ? (
+            <div className="no-print">
+              <Loading />
+            </div>
+          ) : rows.length === 0 ? (
+            <EmptyState
+              title="Belum ada lokasi"
+              description="Tambahkan lokasi terlebih dahulu."
+            />
+          ) : (
+            <div className="grid gap-4">
+              {rows.map((l, i) => (
+                <LocationBlock
+                  key={l.id}
+                  index={i + 1}
+                  loc={l}
+                  signed={signed}
+                />
+              ))}
+            </div>
+          )}
+
+          <PrintDocFooter generatedBy={generatedBy} />
+        </div>
       </div>
 
-      <style>{`
-        @media print {
-          @page { size: A4; margin: 12mm; }
-          body { background: white !important; }
-          .no-print, [data-sidebar], header { display: none !important; }
-          main { padding: 0 !important; }
-          .print-area { display: block !important; }
-          .loc-block { break-inside: avoid; page-break-inside: avoid; }
-        }
-      `}</style>
+      <PrintStyles />
     </DashboardLayout>
   );
 }
@@ -174,69 +179,103 @@ function LocationBlock({
       ? `${Number(loc.latitude).toFixed(5)}, ${Number(loc.longitude).toFixed(5)}`
       : "—";
   return (
-    <section className="loc-block rounded-md border p-3 text-xs">
+    <section className="loc-block print-card">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
-          <div className="text-sm font-bold">
+          <div className="p-title">
             {index}. {loc.name}
           </div>
-          <div className="text-muted-foreground">
+          <div className="p-muted" style={{ fontSize: 13 }}>
             {loc.category ?? "—"} · {loc.city ?? "—"}
             {loc.province ? `, ${loc.province}` : ""}
           </div>
         </div>
-        <div className="text-right text-[10px] text-muted-foreground">
-          <MapPin className="mr-1 inline h-3 w-3" />
+        <div className="p-caption" style={{ textAlign: "right" }}>
+          <MapPin className="mr-1 inline h-3.5 w-3.5" />
           {coord}
         </div>
       </div>
 
-      <div className="mb-2 grid gap-1 sm:grid-cols-2">
+      <div
+        className="mb-2 grid gap-x-6 gap-y-1"
+        style={{
+          gridTemplateColumns: "repeat(2, minmax(0,1fr))",
+          fontSize: 14,
+          color: "#374151",
+        }}
+      >
         <div>
-          <strong>Alamat:</strong> {loc.address ?? "—"}
+          <strong style={{ color: "#111827" }}>Alamat:</strong> {loc.address ?? "—"}
         </div>
         <div>
-          <strong>Kota:</strong> {loc.city ?? "—"}
+          <strong style={{ color: "#111827" }}>Kota:</strong> {loc.city ?? "—"}
           {loc.postal_code ? ` (${loc.postal_code})` : ""}
         </div>
         <div>
-          <strong>Kategori:</strong> {loc.category ?? "—"}
+          <strong style={{ color: "#111827" }}>Kategori:</strong> {loc.category ?? "—"}
         </div>
         <div>
-          <strong>PIC:</strong> {loc.pic ?? "—"}
+          <strong style={{ color: "#111827" }}>PIC:</strong> {loc.pic ?? "—"}
         </div>
       </div>
 
       {loc.notes ? (
-        <div className="mb-2">
-          <strong>Keterangan:</strong>{" "}
+        <div className="mb-2" style={{ fontSize: 14, color: "#374151" }}>
+          <strong style={{ color: "#111827" }}>Keterangan:</strong>{" "}
           <span className="whitespace-pre-line">{loc.notes}</span>
         </div>
       ) : null}
 
       {photos.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {photos.map((p, i) =>
-            signed[p] ? (
-              <img
-                key={p}
-                src={signed[p]}
-                alt={`Foto ${i + 1}`}
-                className="h-32 w-full rounded border object-cover"
-                crossOrigin="anonymous"
-              />
-            ) : (
+        <div
+          className="grid gap-2"
+          style={{ gridTemplateColumns: "repeat(4, minmax(0,1fr))" }}
+        >
+          {photos.map((p, i) => (
+            <div key={p}>
               <div
-                key={p}
-                className="flex h-32 w-full items-center justify-center rounded border bg-muted text-[10px] text-muted-foreground"
+                style={{
+                  aspectRatio: "4 / 3",
+                  width: "100%",
+                  overflow: "hidden",
+                  borderRadius: 8,
+                  border: "1px solid #D1D5DB",
+                  background: "#F9FAFB",
+                }}
               >
-                Memuat…
+                {signed[p] ? (
+                  <img
+                    src={signed[p]}
+                    alt={`Foto ${i + 1}`}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    crossOrigin="anonymous"
+                  />
+                ) : (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "100%",
+                      color: "#6B7280",
+                      fontSize: 11,
+                    }}
+                  >
+                    Memuat…
+                  </div>
+                )}
               </div>
-            ),
-          )}
+              <div
+                className="mt-1 truncate"
+                style={{ fontSize: 11, color: "#6B7280", textAlign: "center" }}
+              >
+                Foto {i + 1}
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
-        <div className="text-[10px] italic text-muted-foreground">
+        <div className="italic" style={{ fontSize: 12, color: "#6B7280" }}>
           (Tanpa foto)
         </div>
       )}
