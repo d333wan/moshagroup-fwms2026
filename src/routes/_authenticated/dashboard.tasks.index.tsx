@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Printer, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -80,12 +80,6 @@ function TasksListPage() {
         description="Kelola tugas lapangan, status, dan petugas yang ditugaskan."
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/dashboard/tasks/print" target="_blank">
-                <Printer className="h-4 w-4" />
-                Cetak Laporan
-              </Link>
-            </Button>
             {canCreate ? (
               <Button asChild size="sm">
                 <Link to="/dashboard/tasks/new">
