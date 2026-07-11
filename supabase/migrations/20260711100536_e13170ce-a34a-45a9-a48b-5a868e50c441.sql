@@ -1,0 +1,1 @@
+CREATE POLICY "field_officers_insert_self" ON public.field_officers FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
