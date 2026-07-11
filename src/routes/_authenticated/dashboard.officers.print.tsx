@@ -8,19 +8,27 @@ import { Loading } from "@/components/common/loading";
 import { EmptyState } from "@/components/common/empty-state";
 import { listOfficers } from "@/lib/officers.functions";
 import { printWithFilename } from "@/lib/print-filename";
-
 import { useAuth } from "@/hooks/use-auth";
 import {
-  COMPANY_ADDRESS,
-  COMPANY_LOGO_URL,
-  COMPANY_NAME,
-} from "@/lib/company";
+  PrintStyles,
+  PrintDocHeader,
+  PrintDocFooter,
+  PrintCover,
+  StatusBadge,
+} from "@/components/print/print-shell";
 
 const STATUS_LABEL: Record<string, string> = {
   available: "Tersedia",
   on_duty: "Bertugas",
   off_duty: "Libur",
   leave: "Cuti",
+};
+
+const STATUS_KEY: Record<string, string> = {
+  available: "completed",
+  on_duty: "in_progress",
+  off_duty: "pending",
+  leave: "assigned",
 };
 
 export const Route = createFileRoute(
@@ -36,7 +44,7 @@ export const Route = createFileRoute(
 });
 
 function PrintOfficersPage() {
-  const { isAdminTier, isManager, loading } = useAuth();
+  const { isAdminTier, isManager, loading, user } = useAuth();
   const q = useQuery({
     queryKey: ["officers"],
     queryFn: () => listOfficers(),
@@ -47,6 +55,13 @@ function PrintOfficersPage() {
   if (!isAdminTier && !isManager) return <Navigate to="/dashboard" />;
 
   const rows = (q.data ?? []) as any[];
+  const generatedBy =
+    (user?.user_metadata as any)?.full_name || user?.email || "—";
+
+  const byStatus = rows.reduce<Record<string, number>>((acc, o) => {
+    acc[o.status] = (acc[o.status] ?? 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <DashboardLayout
@@ -82,107 +97,108 @@ function PrintOfficersPage() {
         />
       </div>
 
-      <div className="print-area">
-        <div className="mb-4 flex items-start justify-between border-b pb-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={COMPANY_LOGO_URL}
-              alt="Logo"
-              className="h-12 w-auto"
-              crossOrigin="anonymous"
-            />
-            <div>
-              <div className="text-base font-bold">{COMPANY_NAME}</div>
-              <div className="text-xs text-muted-foreground">
-                {COMPANY_ADDRESS}
-              </div>
-            </div>
-          </div>
-          <div className="text-right text-xs">
-            <div className="font-semibold">Daftar Petugas Lapangan</div>
-            <div>Dicetak: {new Date().toLocaleString("id-ID")}</div>
-            <div>Total: {rows.length} petugas</div>
-          </div>
+      <div className="print-area print-doc">
+        <div className="print-page">
+          <PrintCover
+            title="Daftar Petugas Lapangan"
+            subtitle="Field Work Management System"
+            generatedBy={generatedBy}
+            stats={[
+              { label: "Total Petugas", value: rows.length },
+              { label: "Tersedia", value: byStatus.available ?? 0 },
+              { label: "Bertugas", value: byStatus.on_duty ?? 0 },
+              { label: "Libur", value: byStatus.off_duty ?? 0 },
+              { label: "Cuti", value: byStatus.leave ?? 0 },
+              {
+                label: "Departemen",
+                value: new Set(rows.map((r) => r.department).filter(Boolean)).size,
+              },
+            ]}
+          />
         </div>
 
-        {q.isLoading ? (
-          <Loading />
-        ) : rows.length === 0 ? (
-          <EmptyState
-            title="Belum ada petugas"
-            description="Tambahkan pengguna dengan peran petugas lapangan terlebih dahulu."
+        <div className="print-page">
+          <PrintDocHeader
+            title="Daftar Petugas Lapangan"
+            subtitle={`Total: ${rows.length} petugas`}
           />
-        ) : (
-          <table className="w-full border-collapse text-xs">
-            <thead>
-              <tr className="bg-muted/40">
-                <th className="border px-2 py-1 text-left">No</th>
-                <th className="border px-2 py-1 text-left">Nama</th>
-                <th className="border px-2 py-1 text-left">Jabatan</th>
-                <th className="border px-2 py-1 text-left">No. HP</th>
-                <th className="border px-2 py-1 text-left">Departemen</th>
-                <th className="border px-2 py-1 text-left">No. KTP</th>
-                <th className="border px-2 py-1 text-left">Alamat</th>
-                <th className="border px-2 py-1 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((o, i) => (
-                <tr key={o.user_id} className="align-top">
-                  <td className="border px-2 py-1">{i + 1}</td>
-                  <td className="border px-2 py-1 font-medium">
-                    {o.full_name || "(tanpa nama)"}
-                    {o.employee_id ? (
-                      <div className="text-[10px] text-muted-foreground">
-                        NIP: {o.employee_id}
-                      </div>
-                    ) : null}
-                  </td>
-                  <td className="border px-2 py-1">{o.job_title ?? "—"}</td>
-                  <td className="border px-2 py-1">{o.phone ?? "—"}</td>
-                  <td className="border px-2 py-1">{o.department ?? "—"}</td>
-                  <td className="border px-2 py-1">{o.nik ?? "—"}</td>
-                  <td className="border px-2 py-1">{o.address ?? "—"}</td>
-                  <td className="border px-2 py-1">
-                    {STATUS_LABEL[o.status] ?? o.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
 
-        <div className="mt-10 grid grid-cols-2 gap-8 text-xs">
-          <div />
-          <div className="text-center">
-            <div>
-              {new Date().toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
+          {q.isLoading ? (
+            <Loading />
+          ) : rows.length === 0 ? (
+            <EmptyState
+              title="Belum ada petugas"
+              description="Tambahkan pengguna dengan peran petugas lapangan terlebih dahulu."
+            />
+          ) : (
+            <table
+              className="w-full border-collapse"
+              style={{ fontSize: 13, color: "#1F2937" }}
+            >
+              <thead>
+                <tr style={{ background: "#F3F4F6", color: "#111827" }}>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>No</th>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>Nama</th>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>Jabatan</th>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>No. HP</th>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>Departemen</th>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>No. KTP</th>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>Alamat</th>
+                  <th className="border px-2 py-2 text-left" style={{ borderColor: "#D1D5DB" }}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((o, i) => (
+                  <tr key={o.user_id} className="align-top">
+                    <td className="border px-2 py-2" style={{ borderColor: "#D1D5DB" }}>{i + 1}</td>
+                    <td className="border px-2 py-2 font-medium" style={{ borderColor: "#D1D5DB", color: "#111827" }}>
+                      {o.full_name || "(tanpa nama)"}
+                      {o.employee_id ? (
+                        <div style={{ fontSize: 11, color: "#6B7280" }}>
+                          NIP: {o.employee_id}
+                        </div>
+                      ) : null}
+                    </td>
+                    <td className="border px-2 py-2" style={{ borderColor: "#D1D5DB" }}>{o.job_title ?? "—"}</td>
+                    <td className="border px-2 py-2" style={{ borderColor: "#D1D5DB" }}>{o.phone ?? "—"}</td>
+                    <td className="border px-2 py-2" style={{ borderColor: "#D1D5DB" }}>{o.department ?? "—"}</td>
+                    <td className="border px-2 py-2" style={{ borderColor: "#D1D5DB" }}>{o.nik ?? "—"}</td>
+                    <td className="border px-2 py-2" style={{ borderColor: "#D1D5DB" }}>{o.address ?? "—"}</td>
+                    <td className="border px-2 py-2" style={{ borderColor: "#D1D5DB" }}>
+                      <StatusBadge
+                        status={STATUS_KEY[o.status] ?? "pending"}
+                        label={STATUS_LABEL[o.status] ?? o.status}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          <div className="mt-10 grid grid-cols-2 gap-8" style={{ fontSize: 13 }}>
+            <div />
+            <div className="text-center">
+              <div style={{ color: "#374151" }}>
+                {new Date().toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </div>
+              <div className="mt-1" style={{ color: "#374151" }}>Mengetahui,</div>
+              <div className="mt-16 font-semibold underline" style={{ color: "#111827" }}>
+                ( ................................ )
+              </div>
+              <div style={{ color: "#4B5563" }}>Manajer / Admin</div>
             </div>
-            <div className="mt-1">Mengetahui,</div>
-            <div className="mt-16 font-semibold underline">
-              ( ................................ )
-            </div>
-            <div>Manajer / Admin</div>
           </div>
+
+          <PrintDocFooter generatedBy={generatedBy} />
         </div>
       </div>
 
-      <style>{`
-        @media print {
-          @page { size: A4 landscape; margin: 12mm; }
-          body { background: white !important; }
-          .no-print, [data-sidebar], header { display: none !important; }
-          main { padding: 0 !important; }
-          .print-area { display: block !important; }
-          table { font-size: 10px; }
-          thead { display: table-header-group; }
-          tr { break-inside: avoid; }
-        }
-      `}</style>
+      <PrintStyles landscape />
     </DashboardLayout>
   );
 }

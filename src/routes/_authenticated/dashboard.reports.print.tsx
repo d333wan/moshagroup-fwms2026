@@ -13,12 +13,14 @@ import { Loading } from "@/components/common/loading";
 import { EmptyState } from "@/components/common/empty-state";
 import { listReportsForPrint } from "@/lib/reports.functions";
 import { printWithFilename } from "@/lib/print-filename";
-
+import { useAuth } from "@/hooks/use-auth";
 import {
-  COMPANY_ADDRESS,
-  COMPANY_LOGO_URL,
-  COMPANY_NAME,
-} from "@/lib/company";
+  PrintStyles,
+  PrintDocHeader,
+  PrintDocFooter,
+  PrintCover,
+  StatusBadge,
+} from "@/components/print/print-shell";
 
 const REPORT_TYPES = ["progress", "completion", "issue"] as const;
 type ReportType = (typeof REPORT_TYPES)[number];
@@ -27,6 +29,15 @@ const TYPE_LABEL: Record<ReportType, string> = {
   progress: "Progres",
   completion: "Selesai",
   issue: "Masalah / Kendala",
+};
+
+const TASK_STATUS_LABEL: Record<string, string> = {
+  draft: "Draft",
+  assigned: "Ditugaskan",
+  in_progress: "Dikerjakan",
+  on_hold: "Ditunda",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
 };
 
 export const Route = createFileRoute("/_authenticated/dashboard/reports/print")(
@@ -47,6 +58,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/reports/print")(
 
 function PrintReportsPage() {
   const { taskId } = useSearch({ from: Route.id });
+  const { user } = useAuth();
   const [types, setTypes] = useState<Record<ReportType, boolean>>({
     progress: true,
     completion: true,
@@ -59,8 +71,7 @@ function PrintReportsPage() {
   const [to, setTo] = useState("");
 
   const activeTypes = useMemo(
-    () =>
-      (Object.keys(types) as ReportType[]).filter((k) => types[k]),
+    () => (Object.keys(types) as ReportType[]).filter((k) => types[k]),
     [types],
   );
 
@@ -81,6 +92,38 @@ function PrintReportsPage() {
 
   const groups = q.data?.groups ?? [];
   const total = q.data?.totalReports ?? 0;
+
+  const stats = useMemo(() => {
+    const tasks = groups.map((g: any) => g.task);
+    const officers = new Set<string>();
+    const locations = new Set<string>();
+    let completed = 0, inProgress = 0, pending = 0;
+    for (const g of groups) {
+      const s = g.task?.status;
+      if (s === "completed") completed++;
+      else if (s === "in_progress") inProgress++;
+      else pending++;
+      if (g.task?.location_text) locations.add(g.task.location_text);
+      for (const r of g.reports ?? []) {
+        if (r.reporter?.full_name) officers.add(r.reporter.full_name);
+      }
+    }
+    return {
+      totalTasks: tasks.length,
+      completed,
+      inProgress,
+      pending,
+      officers: officers.size,
+      locations: locations.size,
+    };
+  }, [groups]);
+
+  const period =
+    from || to
+      ? `${from ? new Date(from).toLocaleDateString("id-ID") : "—"} s/d ${to ? new Date(to).toLocaleDateString("id-ID") : "—"}`
+      : "Semua Periode";
+  const generatedBy =
+    (user?.user_metadata as any)?.full_name || user?.email || "—";
 
   return (
     <DashboardLayout
@@ -134,9 +177,7 @@ function PrintReportsPage() {
             </div>
 
             <div>
-              <Label className="mb-2 block text-sm font-medium">
-                Sertakan
-              </Label>
+              <Label className="mb-2 block text-sm font-medium">Sertakan</Label>
               <div className="flex flex-wrap gap-4">
                 <label className="flex items-center gap-2 text-sm">
                   <Checkbox
@@ -201,8 +242,24 @@ function PrintReportsPage() {
       </div>
 
       {/* Print area */}
-      <div className="print-area">
-        <PrintHeader />
+      <div className="print-area print-doc">
+        <div className="print-page">
+          <PrintCover
+            title="Laporan Lapangan"
+            subtitle="Field Work Management System"
+            period={period}
+            generatedBy={generatedBy}
+            stats={[
+              { label: "Total Tugas", value: stats.totalTasks },
+              { label: "Selesai", value: stats.completed },
+              { label: "Dikerjakan", value: stats.inProgress },
+              { label: "Tertunda", value: stats.pending },
+              { label: "Petugas", value: stats.officers },
+              { label: "Lokasi", value: stats.locations },
+            ]}
+          />
+        </div>
+
         {q.isLoading ? (
           <div className="no-print">
             <Loading />
@@ -215,60 +272,29 @@ function PrintReportsPage() {
             />
           </div>
         ) : (
-          groups.map((g: any) => (
-            <TaskBlock
-              key={g.task.id}
-              task={g.task}
-              reports={g.reports}
-              includePhotos={includePhotos}
-              includeChecklist={includeChecklist}
-              includeGps={includeGps}
+          <div className="print-page">
+            <PrintDocHeader
+              title="Laporan Lapangan"
+              subtitle={`${groups.length} tugas · ${total} laporan`}
             />
-          ))
+            {groups.map((g: any, idx: number) => (
+              <TaskBlock
+                key={g.task.id}
+                task={g.task}
+                reports={g.reports}
+                includePhotos={includePhotos}
+                includeChecklist={includeChecklist}
+                includeGps={includeGps}
+                index={idx + 1}
+              />
+            ))}
+            <PrintDocFooter generatedBy={generatedBy} />
+          </div>
         )}
       </div>
 
-      <style>{`
-        @media print {
-          @page { size: A4; margin: 15mm; }
-          body { background: white !important; }
-          .no-print, [data-sidebar], header { display: none !important; }
-          main { padding: 0 !important; }
-          .print-area { display: block !important; }
-          .task-block { break-before: page; }
-          .task-block:first-child { break-before: auto; }
-          .report-card { break-inside: avoid; }
-          .print-photo { break-inside: avoid; }
-        }
-      `}</style>
+      <PrintStyles />
     </DashboardLayout>
-  );
-}
-
-function PrintHeader() {
-  return (
-    <div className="mb-6 hidden items-start justify-between border-b pb-4 print:flex">
-      <div className="flex items-center gap-3">
-        <img
-          src={COMPANY_LOGO_URL}
-          alt="Logo"
-          className="h-12 w-auto"
-          crossOrigin="anonymous"
-        />
-        <div>
-          <div className="text-base font-bold">{COMPANY_NAME}</div>
-          <div className="text-xs text-muted-foreground">
-            {COMPANY_ADDRESS}
-          </div>
-        </div>
-      </div>
-      <div className="text-right text-xs">
-        <div className="font-semibold">Laporan Lapangan</div>
-        <div>
-          Dicetak: {new Date().toLocaleString("id-ID")}
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -278,61 +304,84 @@ function TaskBlock({
   includePhotos,
   includeChecklist,
   includeGps,
+  index,
 }: {
   task: any;
   reports: any[];
   includePhotos: boolean;
   includeChecklist: boolean;
   includeGps: boolean;
+  index: number;
 }) {
   return (
-    <section className="task-block mb-8">
-      <div className="mb-3 rounded-md border bg-muted/40 p-3">
-        <h2 className="text-lg font-bold">{task.title}</h2>
-        <div className="mt-1 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
-          <div>
-            <strong>Status:</strong> {task.status}
+    <section className="task-block mb-6">
+      <div className="print-card mb-3">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="p-title">
+            {index}. {task.title}
+          </h2>
+          <div className="flex items-center gap-2">
+            <StatusBadge
+              status={task.status}
+              label={TASK_STATUS_LABEL[task.status] ?? task.status}
+            />
+            <StatusBadge status={task.priority} label={task.priority} />
           </div>
+        </div>
+        <div
+          className="mt-1 grid gap-x-6 gap-y-1"
+          style={{
+            gridTemplateColumns: "repeat(2, minmax(0,1fr))",
+            fontSize: 14,
+            color: "#374151",
+          }}
+        >
           <div>
-            <strong>Prioritas:</strong> {task.priority}
-          </div>
-          <div>
-            <strong>Jatuh tempo:</strong>{" "}
+            <strong style={{ color: "#111827" }}>Jatuh tempo:</strong>{" "}
             {task.due_date
               ? new Date(task.due_date).toLocaleString("id-ID")
               : "—"}
           </div>
           <div>
-            <MapPin className="mr-1 inline h-3 w-3" />
+            <MapPin className="mr-1 inline h-3.5 w-3.5" />
             {task.location_text ?? "—"}
           </div>
         </div>
         {task.description ? (
-          <p className="mt-2 whitespace-pre-line text-xs">{task.description}</p>
+          <p
+            className="mt-2 whitespace-pre-line"
+            style={{ color: "#374151", fontSize: 15 }}
+          >
+            {task.description}
+          </p>
         ) : null}
       </div>
 
       <div className="grid gap-3">
         {reports.map((r: any) => (
-          <div
-            key={r.id}
-            className="report-card rounded-md border p-3 text-sm"
-          >
-            <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
-              <span className="rounded bg-primary/10 px-2 py-0.5 font-semibold uppercase text-primary">
-                {TYPE_LABEL[r.report_type as ReportType] ?? r.report_type}
-              </span>
-              <span className="text-muted-foreground">
+          <div key={r.id} className="report-card print-card">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <StatusBadge
+                status={
+                  r.report_type === "completion"
+                    ? "completed"
+                    : r.report_type === "issue"
+                      ? "cancelled"
+                      : "in_progress"
+                }
+                label={TYPE_LABEL[r.report_type as ReportType] ?? r.report_type}
+              />
+              <span className="p-caption">
                 {new Date(r.reported_at).toLocaleString("id-ID")}
               </span>
               {r.reporter ? (
-                <span className="text-muted-foreground">
+                <span className="p-caption">
                   · {r.reporter.full_name}
                   {r.reporter.job_title ? ` (${r.reporter.job_title})` : ""}
                 </span>
               ) : null}
               {includeGps && r.latitude != null && r.longitude != null ? (
-                <span className="text-muted-foreground">
+                <span className="p-caption">
                   · 📍 {Number(r.latitude).toFixed(5)},{" "}
                   {Number(r.longitude).toFixed(5)}
                 </span>
@@ -340,23 +389,45 @@ function TaskBlock({
             </div>
 
             {r.narrative ? (
-              <p className="mb-2 whitespace-pre-line">{r.narrative}</p>
+              <p
+                className="mb-2 whitespace-pre-line"
+                style={{ color: "#1F2937", fontSize: 15, lineHeight: 1.7 }}
+              >
+                {r.narrative}
+              </p>
             ) : (
-              <p className="mb-2 italic text-muted-foreground">
+              <p className="mb-2 italic" style={{ color: "#6B7280" }}>
                 (Tanpa narasi)
               </p>
             )}
 
-            {includeChecklist && Array.isArray(r.checklist) && r.checklist.length > 0 ? (
+            {includeChecklist &&
+            Array.isArray(r.checklist) &&
+            r.checklist.length > 0 ? (
               <div className="mb-2">
-                <div className="mb-1 text-xs font-semibold">Checklist</div>
+                <div
+                  className="mb-1"
+                  style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}
+                >
+                  Checklist
+                </div>
                 <ul className="space-y-1">
                   {r.checklist.map((c: any, i: number) => (
-                    <li key={i} className="flex items-center gap-2 text-xs">
+                    <li
+                      key={i}
+                      className="flex items-center gap-2"
+                      style={{ fontSize: 14, color: "#1F2937" }}
+                    >
                       {c.done ? (
-                        <CheckSquare className="h-3.5 w-3.5 text-primary" />
+                        <CheckSquare
+                          className="h-4 w-4"
+                          style={{ color: "#16A34A" }}
+                        />
                       ) : (
-                        <Square className="h-3.5 w-3.5 text-muted-foreground" />
+                        <Square
+                          className="h-4 w-4"
+                          style={{ color: "#9CA3AF" }}
+                        />
                       )}
                       <span>{c.label}</span>
                     </li>
@@ -367,28 +438,59 @@ function TaskBlock({
 
             {includePhotos && (r.attachments ?? []).length > 0 ? (
               <div>
-                <div className="mb-1 text-xs font-semibold">
-                  <FileText className="mr-1 inline h-3 w-3" />
+                <div
+                  className="mb-2"
+                  style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}
+                >
+                  <FileText className="mr-1 inline h-3.5 w-3.5" />
                   Lampiran ({r.attachments.length})
                 </div>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <div
+                  className="grid gap-3"
+                  style={{ gridTemplateColumns: "repeat(3, minmax(0,1fr))" }}
+                >
                   {r.attachments.map((a: any) =>
-                    a.url && (a.kind === "photo" || a.mime_type?.startsWith("image/")) ? (
+                    a.url &&
+                    (a.kind === "photo" ||
+                      a.mime_type?.startsWith("image/")) ? (
                       <div key={a.id} className="print-photo">
-                        <img
-                          src={a.url}
-                          alt={a.file_name}
-                          className="h-40 w-full rounded border object-cover"
-                          crossOrigin="anonymous"
-                        />
-                        <div className="mt-1 truncate text-[10px] text-muted-foreground">
+                        <div
+                          style={{
+                            aspectRatio: "4 / 3",
+                            width: "100%",
+                            overflow: "hidden",
+                            borderRadius: 8,
+                            border: "1px solid #D1D5DB",
+                            background: "#F9FAFB",
+                          }}
+                        >
+                          <img
+                            src={a.url}
+                            alt={a.file_name}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                            crossOrigin="anonymous"
+                          />
+                        </div>
+                        <div
+                          className="mt-1 truncate"
+                          style={{ fontSize: 11, color: "#6B7280" }}
+                        >
                           {a.file_name}
                         </div>
                       </div>
                     ) : (
                       <div
                         key={a.id}
-                        className="rounded border p-2 text-[10px]"
+                        className="rounded border p-2"
+                        style={{
+                          fontSize: 12,
+                          color: "#374151",
+                          borderColor: "#D1D5DB",
+                        }}
                       >
                         {a.file_name}
                       </div>
