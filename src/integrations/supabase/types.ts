@@ -101,6 +101,47 @@ export type Database = {
           },
         ]
       }
+      field_report_documents: {
+        Row: {
+          created_at: string
+          filename: string
+          id: string
+          mime_type: string | null
+          report_id: string
+          size_bytes: number | null
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          filename: string
+          id?: string
+          mime_type?: string | null
+          report_id: string
+          size_bytes?: number | null
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          filename?: string
+          id?: string
+          mime_type?: string | null
+          report_id?: string
+          size_bytes?: number | null
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_report_documents_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "field_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       field_report_photos: {
         Row: {
           caption: string | null
@@ -262,6 +303,50 @@ export type Database = {
             columns: ["verified_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      location_attachments: {
+        Row: {
+          created_at: string
+          filename: string
+          id: string
+          kind: Database["public"]["Enums"]["task_attachment_kind"]
+          location_id: string
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          filename: string
+          id?: string
+          kind?: Database["public"]["Enums"]["task_attachment_kind"]
+          location_id: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          filename?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["task_attachment_kind"]
+          location_id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_attachments_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -435,6 +520,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "task_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_attachments: {
+        Row: {
+          created_at: string
+          filename: string
+          id: string
+          kind: Database["public"]["Enums"]["task_attachment_kind"]
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+          task_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          filename: string
+          id?: string
+          kind?: Database["public"]["Enums"]["task_attachment_kind"]
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          task_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          filename?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["task_attachment_kind"]
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          task_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_attachments_task_id_fkey"
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
@@ -750,6 +879,7 @@ export type Database = {
         | "completed"
       officer_status: "available" | "on_duty" | "off_duty" | "leave"
       report_type: "progress" | "completion" | "issue"
+      task_attachment_kind: "surat_tugas" | "other"
       task_photo_direction_mode: "none" | "single" | "four_way"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status:
@@ -921,6 +1051,7 @@ export const Constants = {
       ],
       officer_status: ["available", "on_duty", "off_duty", "leave"],
       report_type: ["progress", "completion", "issue"],
+      task_attachment_kind: ["surat_tugas", "other"],
       task_photo_direction_mode: ["none", "single", "four_way"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: [
