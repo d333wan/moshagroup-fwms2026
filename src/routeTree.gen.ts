@@ -36,6 +36,7 @@ import { Route as AuthenticatedDashboardOfficersUserIdRouteImport } from './rout
 import { Route as AuthenticatedDashboardLocationsPrintRouteImport } from './routes/_authenticated/dashboard.locations.print'
 import { Route as AuthenticatedDashboardLocationsLocationIdRouteImport } from './routes/_authenticated/dashboard.locations.$locationId'
 import { Route as AuthenticatedDashboardFieldReportsReportIdRouteImport } from './routes/_authenticated/dashboard.field-reports.$reportId'
+import { Route as AuthenticatedDashboardFieldReportsAdminIndexRouteImport } from './routes/_authenticated/dashboard.field-reports.admin.index'
 import { Route as AuthenticatedDashboardTasksTaskIdEditRouteImport } from './routes/_authenticated/dashboard.tasks.$taskId.edit'
 import { Route as AuthenticatedDashboardFieldReportsNewTaskIdRouteImport } from './routes/_authenticated/dashboard.field-reports.new.$taskId'
 import { Route as AuthenticatedDashboardTasksTaskIdReportsNewRouteImport } from './routes/_authenticated/dashboard.tasks.$taskId.reports.new'
@@ -194,6 +195,12 @@ const AuthenticatedDashboardFieldReportsReportIdRoute =
     path: '/field-reports/$reportId',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardFieldReportsAdminIndexRoute =
+  AuthenticatedDashboardFieldReportsAdminIndexRouteImport.update({
+    id: '/field-reports/admin/',
+    path: '/field-reports/admin/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardTasksTaskIdEditRoute =
   AuthenticatedDashboardTasksTaskIdEditRouteImport.update({
     id: '/edit',
@@ -242,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/tasks/': typeof AuthenticatedDashboardTasksIndexRoute
   '/dashboard/field-reports/new/$taskId': typeof AuthenticatedDashboardFieldReportsNewTaskIdRoute
   '/dashboard/tasks/$taskId/edit': typeof AuthenticatedDashboardTasksTaskIdEditRoute
+  '/dashboard/field-reports/admin/': typeof AuthenticatedDashboardFieldReportsAdminIndexRoute
   '/dashboard/tasks/$taskId/reports/new': typeof AuthenticatedDashboardTasksTaskIdReportsNewRoute
 }
 export interface FileRoutesByTo {
@@ -269,6 +277,7 @@ export interface FileRoutesByTo {
   '/dashboard/tasks': typeof AuthenticatedDashboardTasksIndexRoute
   '/dashboard/field-reports/new/$taskId': typeof AuthenticatedDashboardFieldReportsNewTaskIdRoute
   '/dashboard/tasks/$taskId/edit': typeof AuthenticatedDashboardTasksTaskIdEditRoute
+  '/dashboard/field-reports/admin': typeof AuthenticatedDashboardFieldReportsAdminIndexRoute
   '/dashboard/tasks/$taskId/reports/new': typeof AuthenticatedDashboardTasksTaskIdReportsNewRoute
 }
 export interface FileRoutesById {
@@ -302,6 +311,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/tasks/': typeof AuthenticatedDashboardTasksIndexRoute
   '/_authenticated/dashboard/field-reports/new/$taskId': typeof AuthenticatedDashboardFieldReportsNewTaskIdRoute
   '/_authenticated/dashboard/tasks/$taskId/edit': typeof AuthenticatedDashboardTasksTaskIdEditRoute
+  '/_authenticated/dashboard/field-reports/admin/': typeof AuthenticatedDashboardFieldReportsAdminIndexRoute
   '/_authenticated/dashboard/tasks/$taskId/reports/new': typeof AuthenticatedDashboardTasksTaskIdReportsNewRoute
 }
 export interface FileRouteTypes {
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/dashboard/tasks/'
     | '/dashboard/field-reports/new/$taskId'
     | '/dashboard/tasks/$taskId/edit'
+    | '/dashboard/field-reports/admin/'
     | '/dashboard/tasks/$taskId/reports/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/dashboard/tasks'
     | '/dashboard/field-reports/new/$taskId'
     | '/dashboard/tasks/$taskId/edit'
+    | '/dashboard/field-reports/admin'
     | '/dashboard/tasks/$taskId/reports/new'
   id:
     | '__root__'
@@ -394,6 +406,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/tasks/'
     | '/_authenticated/dashboard/field-reports/new/$taskId'
     | '/_authenticated/dashboard/tasks/$taskId/edit'
+    | '/_authenticated/dashboard/field-reports/admin/'
     | '/_authenticated/dashboard/tasks/$taskId/reports/new'
   fileRoutesById: FileRoutesById
 }
@@ -597,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardFieldReportsReportIdRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/field-reports/admin/': {
+      id: '/_authenticated/dashboard/field-reports/admin/'
+      path: '/field-reports/admin'
+      fullPath: '/dashboard/field-reports/admin/'
+      preLoaderRoute: typeof AuthenticatedDashboardFieldReportsAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/tasks/$taskId/edit': {
       id: '/_authenticated/dashboard/tasks/$taskId/edit'
       path: '/edit'
@@ -716,6 +736,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardReportsPrintRoute: typeof AuthenticatedDashboardReportsPrintRoute
   AuthenticatedDashboardFieldReportsIndexRoute: typeof AuthenticatedDashboardFieldReportsIndexRoute
   AuthenticatedDashboardFieldReportsNewTaskIdRoute: typeof AuthenticatedDashboardFieldReportsNewTaskIdRoute
+  AuthenticatedDashboardFieldReportsAdminIndexRoute: typeof AuthenticatedDashboardFieldReportsAdminIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
@@ -739,6 +760,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
       AuthenticatedDashboardFieldReportsIndexRoute,
     AuthenticatedDashboardFieldReportsNewTaskIdRoute:
       AuthenticatedDashboardFieldReportsNewTaskIdRoute,
+    AuthenticatedDashboardFieldReportsAdminIndexRoute:
+      AuthenticatedDashboardFieldReportsAdminIndexRoute,
   }
 
 const AuthenticatedDashboardRouteWithChildren =

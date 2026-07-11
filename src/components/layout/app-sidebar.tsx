@@ -14,6 +14,7 @@ import {
   Printer,
   ChevronRight,
   FileText,
+  ClipboardCheck,
 } from "lucide-react";
 import {
   Sidebar,
