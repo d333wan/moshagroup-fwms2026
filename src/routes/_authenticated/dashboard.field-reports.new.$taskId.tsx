@@ -30,6 +30,7 @@ import {
   FIELD_WORK_STATUS_VALUES,
 } from "@/lib/field-reports.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { AttachmentsPanel } from "@/components/common/attachments-panel";
 
 export const Route = createFileRoute(
   "/_authenticated/dashboard/field-reports/new/$taskId",
