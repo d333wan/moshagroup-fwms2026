@@ -206,7 +206,7 @@ export const updateTask = createServerFn({ method: "POST" })
       throw new Error("Forbidden: butuh peran manager atau lebih tinggi");
     const { error } = await context.supabase
       .from("tasks")
-      .update(data.patch)
+      .update({ ...data.patch, updated_at: new Date().toISOString() })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
