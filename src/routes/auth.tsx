@@ -9,6 +9,7 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAccountLocked, recordFailedLogin } from "@/lib/auth-guard.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
