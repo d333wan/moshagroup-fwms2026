@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
@@ -11,6 +12,8 @@ import {
   UserCog,
   HardHat,
   Printer,
+  ChevronRight,
+  FileText,
 } from "lucide-react";
 import {
   Sidebar,
@@ -23,6 +26,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -32,13 +38,23 @@ const mainNav: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
 ];
 
+const petugasNav: NavItem[] = [
+  { label: "Dashboard Petugas", to: "/dashboard/my-work", icon: HardHat },
+  { label: "Notifikasi", to: "/dashboard/notifications", icon: Bell },
+];
+
 const moduleNav: NavItem[] = [
   { label: "Dashboard Petugas", to: "/dashboard/my-work", icon: HardHat },
   { label: "Penugasan", to: "/dashboard/tasks", icon: ClipboardList },
   { label: "Petugas Lapangan", to: "/dashboard/officers", icon: Users },
   { label: "Lokasi", to: "/dashboard/locations", icon: MapPin },
-  { label: "Cetak Laporan", to: "/dashboard/reports/print", icon: Printer },
   { label: "Notifikasi", to: "/dashboard/notifications", icon: Bell },
+];
+
+const printSubNav: NavItem[] = [
+  { label: "Daftar Petugas", to: "/dashboard/officers/print", icon: Users },
+  { label: "Daftar Lokasi", to: "/dashboard/locations/print", icon: MapPin },
+  { label: "Laporan Lapangan", to: "/dashboard/reports/print", icon: FileText },
 ];
 
 const systemNav: NavItem[] = [
@@ -48,8 +64,13 @@ const systemNav: NavItem[] = [
 
 export function AppSidebar() {
   const { location } = useRouterState();
-  const { isSuperAdmin, isAdminTier, isManager } = useAuth();
+  const { isSuperAdmin, isAdminTier, isManager, isPetugas } = useAuth();
   const canManage = isAdminTier || isManager;
+  const petugasOnly = isPetugas && !canManage && !isSuperAdmin;
+
+  const [printOpen, setPrintOpen] = useState(() =>
+    location.pathname.includes("/print"),
+  );
 
   const modules = moduleNav.filter((n) => {
     if (n.to === "/dashboard/officers" || n.to === "/dashboard/locations") {
@@ -74,6 +95,40 @@ export function AppSidebar() {
       );
     });
 
+  // Simplified sidebar for field officer only
+  if (petugasOnly) {
+    return (
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <HardHat className="h-4 w-4" />
+            </div>
+            <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
+              <span className="text-sm font-semibold">FWMS</span>
+              <span className="text-xs text-muted-foreground">Petugas Lapangan</span>
+            </div>
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Menu</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>{renderItems(petugasNav)}</SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <div className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+            v0.4.0
+          </div>
+        </SidebarFooter>
+      </Sidebar>
+    );
+  }
+
+  const printActive = printSubNav.some((s) => location.pathname === s.to);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -97,7 +152,42 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Modul</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>{renderItems(modules)}</SidebarMenu>
+            <SidebarMenu>
+              {renderItems(modules)}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={printActive}
+                  tooltip="Cetak Laporan"
+                  onClick={() => setPrintOpen((v) => !v)}
+                >
+                  <Printer />
+                  <span>Cetak Laporan</span>
+                  <ChevronRight
+                    className={`ml-auto h-4 w-4 transition-transform ${
+                      printOpen ? "rotate-90" : ""
+                    }`}
+                  />
+                </SidebarMenuButton>
+                {printOpen ? (
+                  <SidebarMenuSub>
+                    {printSubNav.map((s) => {
+                      const active = location.pathname === s.to;
+                      const Icon = s.icon;
+                      return (
+                        <SidebarMenuSubItem key={s.to}>
+                          <SidebarMenuSubButton asChild isActive={active}>
+                            <Link to={s.to}>
+                              <Icon />
+                              <span>{s.label}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      );
+                    })}
+                  </SidebarMenuSub>
+                ) : null}
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
         {isSuperAdmin && (
