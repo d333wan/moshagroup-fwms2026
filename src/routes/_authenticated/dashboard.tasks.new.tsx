@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
+import calendarIcon from "@/assets/calendar-picker-icon.png";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -159,7 +160,13 @@ function NewTaskPage() {
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="due-calendar-input"
+                  className="due-calendar-input pr-11"
+                  style={{
+                    backgroundImage: `url(${calendarIcon})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 0.6rem center",
+                    backgroundSize: "28px 28px",
+                  }}
                 />
               </div>
             </div>
@@ -234,16 +241,12 @@ function NewTaskPage() {
       </Card>
       <style>{`
         .due-calendar-input::-webkit-calendar-picker-indicator {
-          width: 32px;
-          height: 32px;
-          min-width: 32px;
-          min-height: 32px;
-          cursor: pointer;
-          opacity: 1;
-          filter: brightness(1.6) saturate(1.8);
+          display: none;
+          -webkit-appearance: none;
+          appearance: none;
         }
-        .due-calendar-input::-webkit-calendar-picker-indicator:hover {
-          opacity: 0.85;
+        .due-calendar-input::-moz-calendar-picker-indicator {
+          display: none;
         }
       `}</style>
     </DashboardLayout>
