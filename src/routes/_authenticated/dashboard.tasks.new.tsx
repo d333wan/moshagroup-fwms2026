@@ -63,7 +63,27 @@ function NewTaskPage() {
   const [priority, setPriority] = useState<string>("medium");
   const [dueDate, setDueDate] = useState<string>("");
   const [location, setLocation] = useState("");
+  const [selectedLoc, setSelectedLoc] = useState<any | null>(null);
+  const [locPickerOpen, setLocPickerOpen] = useState(false);
+  const [locSearch, setLocSearch] = useState("");
   const [assignees, setAssignees] = useState<string[]>([]);
+
+  const locations = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => listLocations(),
+    enabled: locPickerOpen,
+  });
+
+  const filteredLocs = useMemo(() => {
+    const list = (locations.data ?? []) as any[];
+    const q = locSearch.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((l) =>
+      [l.name, l.address, l.city, l.province, l.pic, l.category]
+        .filter(Boolean)
+        .some((v: string) => String(v).toLowerCase().includes(q)),
+    );
+  }, [locations.data, locSearch]);
 
   const users = useQuery({
     queryKey: ["assignable-users"],
