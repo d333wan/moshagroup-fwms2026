@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { Printer } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import {
 import { listOfficers } from "@/lib/officers.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { Navigate } from "@tanstack/react-router";
+
 
 const STATUS_LABEL: Record<string, string> = {
   available: "Tersedia",
