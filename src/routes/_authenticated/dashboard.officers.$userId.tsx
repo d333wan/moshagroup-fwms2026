@@ -79,11 +79,14 @@ function OfficerEditPage() {
     setPhone(p.phone ?? "");
     setJobTitle(p.job_title ?? "");
     setEmployeeId(p.employee_id ?? "");
+    setNik((p as any).nik ?? "");
+    setAddress((p as any).address ?? "");
     setDepartment(o?.department ?? "");
     setSkills((o?.skills ?? []).join(", "));
     setBaseLoc(o?.base_location_id ?? "none");
     setStatus(o?.status ?? "available");
     setNotes(o?.notes ?? "");
+
   }, [q.data]);
 
   const save = useMutation({
