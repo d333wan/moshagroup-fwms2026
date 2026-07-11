@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Loading } from "@/components/common/loading";
 import { EmptyState } from "@/components/common/empty-state";
 import { listReportsForPrint } from "@/lib/reports.functions";
+import { printWithFilename } from "@/lib/print-filename";
+
 import {
   COMPANY_ADDRESS,
   COMPANY_LOGO_URL,
@@ -95,7 +97,7 @@ function PrintReportsPage() {
           actions={
             <Button
               size="sm"
-              onClick={() => window.print()}
+              onClick={() => printWithFilename("Laporan-Lapangan")}
               disabled={total === 0}
             >
               <Printer className="h-4 w-4" />

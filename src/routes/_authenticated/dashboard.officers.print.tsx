@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/common/loading";
 import { EmptyState } from "@/components/common/empty-state";
 import { listOfficers } from "@/lib/officers.functions";
+import { printWithFilename } from "@/lib/print-filename";
+
 import { useAuth } from "@/hooks/use-auth";
 import {
   COMPANY_ADDRESS,
@@ -69,7 +71,7 @@ function PrintOfficersPage() {
               </Button>
               <Button
                 size="sm"
-                onClick={() => window.print()}
+                onClick={() => printWithFilename("Daftar-Petugas-Lapangan")}
                 disabled={rows.length === 0}
               >
                 <Printer className="h-4 w-4" />
