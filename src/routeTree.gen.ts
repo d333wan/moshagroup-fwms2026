@@ -35,6 +35,7 @@ import { Route as AuthenticatedDashboardOfficersPrintRouteImport } from './route
 import { Route as AuthenticatedDashboardOfficersUserIdRouteImport } from './routes/_authenticated/dashboard.officers.$userId'
 import { Route as AuthenticatedDashboardLocationsPrintRouteImport } from './routes/_authenticated/dashboard.locations.print'
 import { Route as AuthenticatedDashboardLocationsLocationIdRouteImport } from './routes/_authenticated/dashboard.locations.$locationId'
+import { Route as AuthenticatedDashboardFieldReportsReportIdRouteImport } from './routes/_authenticated/dashboard.field-reports.$reportId'
 import { Route as AuthenticatedDashboardTasksTaskIdEditRouteImport } from './routes/_authenticated/dashboard.tasks.$taskId.edit'
 import { Route as AuthenticatedDashboardFieldReportsNewTaskIdRouteImport } from './routes/_authenticated/dashboard.field-reports.new.$taskId'
 import { Route as AuthenticatedDashboardTasksTaskIdReportsNewRouteImport } from './routes/_authenticated/dashboard.tasks.$taskId.reports.new'
@@ -187,6 +188,12 @@ const AuthenticatedDashboardLocationsLocationIdRoute =
     path: '/$locationId',
     getParentRoute: () => AuthenticatedDashboardLocationsRoute,
   } as any)
+const AuthenticatedDashboardFieldReportsReportIdRoute =
+  AuthenticatedDashboardFieldReportsReportIdRouteImport.update({
+    id: '/field-reports/$reportId',
+    path: '/field-reports/$reportId',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardTasksTaskIdEditRoute =
   AuthenticatedDashboardTasksTaskIdEditRouteImport.update({
     id: '/edit',
@@ -220,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/field-reports/$reportId': typeof AuthenticatedDashboardFieldReportsReportIdRoute
   '/dashboard/locations/$locationId': typeof AuthenticatedDashboardLocationsLocationIdRoute
   '/dashboard/locations/print': typeof AuthenticatedDashboardLocationsPrintRoute
   '/dashboard/officers/$userId': typeof AuthenticatedDashboardOfficersUserIdRoute
@@ -246,6 +254,7 @@ export interface FileRoutesByTo {
   '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/field-reports/$reportId': typeof AuthenticatedDashboardFieldReportsReportIdRoute
   '/dashboard/locations/$locationId': typeof AuthenticatedDashboardLocationsLocationIdRoute
   '/dashboard/locations/print': typeof AuthenticatedDashboardLocationsPrintRoute
   '/dashboard/officers/$userId': typeof AuthenticatedDashboardOfficersUserIdRoute
@@ -278,6 +287,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/tasks': typeof AuthenticatedDashboardTasksRouteWithChildren
   '/_authenticated/dashboard/users': typeof AuthenticatedDashboardUsersRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/dashboard/field-reports/$reportId': typeof AuthenticatedDashboardFieldReportsReportIdRoute
   '/_authenticated/dashboard/locations/$locationId': typeof AuthenticatedDashboardLocationsLocationIdRoute
   '/_authenticated/dashboard/locations/print': typeof AuthenticatedDashboardLocationsPrintRoute
   '/_authenticated/dashboard/officers/$userId': typeof AuthenticatedDashboardOfficersUserIdRoute
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/dashboard/tasks'
     | '/dashboard/users'
     | '/dashboard/'
+    | '/dashboard/field-reports/$reportId'
     | '/dashboard/locations/$locationId'
     | '/dashboard/locations/print'
     | '/dashboard/officers/$userId'
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/dashboard/notifications'
     | '/dashboard/users'
     | '/dashboard'
+    | '/dashboard/field-reports/$reportId'
     | '/dashboard/locations/$locationId'
     | '/dashboard/locations/print'
     | '/dashboard/officers/$userId'
@@ -367,6 +379,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/tasks'
     | '/_authenticated/dashboard/users'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/dashboard/field-reports/$reportId'
     | '/_authenticated/dashboard/locations/$locationId'
     | '/_authenticated/dashboard/locations/print'
     | '/_authenticated/dashboard/officers/$userId'
@@ -577,6 +590,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardLocationsLocationIdRouteImport
       parentRoute: typeof AuthenticatedDashboardLocationsRoute
     }
+    '/_authenticated/dashboard/field-reports/$reportId': {
+      id: '/_authenticated/dashboard/field-reports/$reportId'
+      path: '/field-reports/$reportId'
+      fullPath: '/dashboard/field-reports/$reportId'
+      preLoaderRoute: typeof AuthenticatedDashboardFieldReportsReportIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/tasks/$taskId/edit': {
       id: '/_authenticated/dashboard/tasks/$taskId/edit'
       path: '/edit'
@@ -692,6 +712,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardTasksRoute: typeof AuthenticatedDashboardTasksRouteWithChildren
   AuthenticatedDashboardUsersRoute: typeof AuthenticatedDashboardUsersRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedDashboardFieldReportsReportIdRoute: typeof AuthenticatedDashboardFieldReportsReportIdRoute
   AuthenticatedDashboardReportsPrintRoute: typeof AuthenticatedDashboardReportsPrintRoute
   AuthenticatedDashboardFieldReportsIndexRoute: typeof AuthenticatedDashboardFieldReportsIndexRoute
   AuthenticatedDashboardFieldReportsNewTaskIdRoute: typeof AuthenticatedDashboardFieldReportsNewTaskIdRoute
@@ -710,6 +731,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
       AuthenticatedDashboardTasksRouteWithChildren,
     AuthenticatedDashboardUsersRoute: AuthenticatedDashboardUsersRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+    AuthenticatedDashboardFieldReportsReportIdRoute:
+      AuthenticatedDashboardFieldReportsReportIdRoute,
     AuthenticatedDashboardReportsPrintRoute:
       AuthenticatedDashboardReportsPrintRoute,
     AuthenticatedDashboardFieldReportsIndexRoute:
