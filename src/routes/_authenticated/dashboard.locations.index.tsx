@@ -75,16 +75,25 @@ function LocationsPage() {
         title="Lokasi"
         description="Master data lokasi kerja lapangan."
         actions={
-          canManage ? (
-            <Button asChild size="sm">
-              <Link to="/dashboard/locations/$locationId" params={{ locationId: "new" }}>
-                <Plus className="h-4 w-4" />
-                Tambah Lokasi
+          <div className="flex gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link to="/dashboard/locations/print">
+                <Printer className="h-4 w-4" />
+                Cetak PDF
               </Link>
             </Button>
-          ) : null
+            {canManage ? (
+              <Button asChild size="sm">
+                <Link to="/dashboard/locations/$locationId" params={{ locationId: "new" }}>
+                  <Plus className="h-4 w-4" />
+                  Tambah Lokasi
+                </Link>
+              </Button>
+            ) : null}
+          </div>
         }
       />
+
       <Card>
         <CardContent className="p-4 sm:p-6">
           {q.isLoading ? (
