@@ -311,6 +311,21 @@ function LocationEditPage() {
                 )}
               </div>
 
+              {!isNew ? (
+                <div className="grid gap-2 pt-2">
+                  <Label>Surat Tugas & Dokumen Lokasi</Label>
+                  <AttachmentsPanel
+                    scope="location"
+                    parentId={locationId}
+                    canUpload={isAdminTier || isManager}
+                    canDelete={isAdminTier || isManager}
+                    emptyText="Belum ada dokumen di lokasi ini."
+                  />
+                </div>
+              ) : null}
+
+
+
               <div className="flex justify-end gap-2 pt-2">
                 <Button type="button" variant="outline" onClick={() => navigate({ to: "/dashboard/locations" })}>
                   Batal
