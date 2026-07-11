@@ -86,7 +86,7 @@ function SignInForm() {
     setBusy(true);
 
     // Pre-check: akun terkunci?
-    const { data: locked } = await supabase.rpc("check_account_locked", { _email: email });
+    const { locked } = await checkAccountLocked({ data: { email } });
     if (locked) {
       setBusy(false);
       toast.error("Akun terkunci", {
@@ -99,8 +99,8 @@ function SignInForm() {
     setBusy(false);
 
     if (error) {
-      const { data: info } = await supabase.rpc("record_failed_login", { _email: email });
-      const rec = info as { attempts?: number; locked?: boolean; is_super_admin?: boolean; exists?: boolean } | null;
+      const rec = await recordFailedLogin({ data: { email } });
+
 
       if (rec?.locked) {
         toast.error("Akun terkunci", {
