@@ -282,6 +282,43 @@ function NewTaskPage() {
               ) : null}
             </div>
 
+            <details className="rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Supervisor Perusahaan & Kontak Darurat (opsional)</summary>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div><Label>Nama Perusahaan</Label><Input value={supCompany} onChange={(e) => setSupCompany(e.target.value)} /></div>
+                <div><Label>Nama Supervisor</Label><Input value={supPerson} onChange={(e) => setSupPerson(e.target.value)} /></div>
+                <div><Label>Jabatan</Label><Input value={supJob} onChange={(e) => setSupJob(e.target.value)} /></div>
+                <div><Label>Telepon Supervisor</Label><Input value={supPhone} onChange={(e) => setSupPhone(e.target.value)} /></div>
+                <div><Label>WhatsApp Supervisor</Label><Input value={supWa} onChange={(e) => setSupWa(e.target.value)} placeholder="6281..." /></div>
+                <div><Label>Kontak Darurat Utama</Label><Input value={emergency1} onChange={(e) => setEmergency1(e.target.value)} /></div>
+                <div><Label>Kontak Darurat Cadangan</Label><Input value={emergency2} onChange={(e) => setEmergency2(e.target.value)} /></div>
+              </div>
+            </details>
+
+            <details className="rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Kendaraan & Dokumentasi (opsional)</summary>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div><Label>Jenis Kendaraan</Label><Input value={vehType} onChange={(e) => setVehType(e.target.value)} /></div>
+                <div><Label>Nomor Plat</Label><Input value={vehPlate} onChange={(e) => setVehPlate(e.target.value)} /></div>
+                <div>
+                  <Label>Mode Dokumentasi Foto Arah</Label>
+                  <Select value={dirMode} onValueChange={(v) => setDirMode(v as any)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="single">Foto lokasi biasa</SelectItem>
+                      <SelectItem value="four_way">Empat arah</SelectItem>
+                      <SelectItem value="none">Tidak diperlukan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Radius Toleransi (meter)</Label>
+                  <Input type="number" min={10} max={10000} value={radius} onChange={(e) => setRadius(Number(e.target.value) || 100)} />
+                </div>
+              </div>
+            </details>
+
+
             <div className="grid gap-2">
               <Label>Petugas</Label>
               <div className="rounded-md border p-3">
