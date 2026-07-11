@@ -159,6 +159,7 @@ function NewTaskPage() {
                   type="datetime-local"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
+                  className="due-calendar-input"
                 />
               </div>
             </div>
