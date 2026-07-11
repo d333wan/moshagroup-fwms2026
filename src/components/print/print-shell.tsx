@@ -123,7 +123,7 @@ export function PrintStyles({ landscape = false }: { landscape?: boolean }) {
       @media print {
         @page { size: A4 ${landscape ? "landscape" : "portrait"}; margin: 12mm 12mm 16mm; }
         html, body { background: #ffffff !important; }
-        .no-print, [data-sidebar], header[data-app-header], nav[aria-label="Breadcrumb"] { display: none !important; }
+        .no-print, [data-sidebar], header[data-app-header], .app-header, nav[aria-label="Breadcrumb"] { display: none !important; }
         main { padding: 0 !important; background: #ffffff !important; }
 
         .print-page {
