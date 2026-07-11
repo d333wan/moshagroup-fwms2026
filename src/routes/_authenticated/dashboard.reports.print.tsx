@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Loading } from "@/components/common/loading";
 import { EmptyState } from "@/components/common/empty-state";
 import { listReportsForPrint } from "@/lib/reports.functions";
+import { printWithFilename } from "@/lib/print-filename";
+
 import {
   COMPANY_ADDRESS,
   COMPANY_LOGO_URL,
