@@ -54,6 +54,7 @@ const moduleNav: NavItem[] = [
 const printSubNav: NavItem[] = [
   { label: "Daftar Petugas", to: "/dashboard/officers/print", icon: Users },
   { label: "Daftar Lokasi", to: "/dashboard/locations/print", icon: MapPin },
+  { label: "Laporan Penugasan", to: "/dashboard/tasks/print", icon: ClipboardList },
   { label: "Laporan Lapangan", to: "/dashboard/reports/print", icon: FileText },
 ];
 
