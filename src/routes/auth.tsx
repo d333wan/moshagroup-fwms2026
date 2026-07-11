@@ -84,11 +84,50 @@ function SignInForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    // Pre-check: akun terkunci?
+    const { data: locked } = await supabase.rpc("check_account_locked", { _email: email });
+    if (locked) {
+      setBusy(false);
+      toast.error("Akun terkunci", {
+        description: "Akun Anda dikunci karena terlalu banyak percobaan gagal. Silakan hubungi admin.",
+      });
+      return;
+    }
+
+    const { data: signIn, error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
+
     if (error) {
+      const { data: info } = await supabase.rpc("record_failed_login", { _email: email });
+      const rec = info as { attempts?: number; locked?: boolean; is_super_admin?: boolean; exists?: boolean } | null;
+
+      if (rec?.locked) {
+        toast.error("Akun terkunci", {
+          description: "Password salah 3 kali. Akun dikunci — silakan hubungi admin untuk membuka.",
+        });
+        return;
+      }
+
+      if (rec?.exists && typeof rec.attempts === "number") {
+        const remaining = Math.max(0, 3 - rec.attempts);
+        const isSuper = rec.is_super_admin;
+        toast.error("Password salah", {
+          description: isSuper
+            ? `Percobaan gagal ke-${rec.attempts}. Akun super admin tidak akan dikunci.`
+            : `Percobaan gagal ke-${rec.attempts} dari 3. ${
+                remaining > 0 ? `Sisa ${remaining} kesempatan sebelum akun dikunci.` : "Akun akan dikunci."
+              }`,
+        });
+        return;
+      }
+
       toast.error("Gagal masuk", { description: error.message });
       return;
+    }
+
+    if (signIn.user) {
+      await supabase.rpc("reset_failed_logins", { _user_id: signIn.user.id });
     }
     toast.success("Berhasil masuk");
   };
