@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
+import calendarIcon from "@/assets/calendar-picker-icon.png";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent } from "@/components/ui/card";
