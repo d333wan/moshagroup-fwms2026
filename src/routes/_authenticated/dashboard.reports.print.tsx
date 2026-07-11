@@ -2,8 +2,6 @@ import { useMemo, useState } from "react";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Printer, FileText, MapPin, CheckSquare, Square } from "lucide-react";
-import { z } from "zod";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
