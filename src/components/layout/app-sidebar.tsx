@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   UserCog,
   HardHat,
+  Printer,
 } from "lucide-react";
 import {
   Sidebar,
@@ -36,6 +37,7 @@ const moduleNav: NavItem[] = [
   { label: "Penugasan", to: "/dashboard/tasks", icon: ClipboardList },
   { label: "Petugas Lapangan", to: "/dashboard/officers", icon: Users },
   { label: "Lokasi", to: "/dashboard/locations", icon: MapPin },
+  { label: "Cetak Laporan", to: "/dashboard/reports/print", icon: Printer },
   { label: "Notifikasi", to: "/dashboard/notifications", icon: Bell },
 ];
 

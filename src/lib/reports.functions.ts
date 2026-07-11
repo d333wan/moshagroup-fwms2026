@@ -106,3 +106,105 @@ export const getSignedAttachmentUrl = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { url: signed.signedUrl as string };
   });
+
+// ---- Print/Export: list reports across tasks with signed URLs ----
+const printInput = z.object({
+  task_id: z.string().uuid().optional().nullable(),
+  types: z.array(z.enum(REPORT_TYPES)).default([...REPORT_TYPES]),
+  from: z.string().optional().nullable(),
+  to: z.string().optional().nullable(),
+});
+
+export const listReportsForPrint = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => printInput.parse(d))
+  .handler(async ({ data, context }) => {
+    const types = data.types.length ? data.types : [...REPORT_TYPES];
+    let q = context.supabase
+      .from("task_reports")
+      .select(
+        "id, task_id, reported_by, report_type, narrative, checklist, latitude, longitude, reported_at",
+      )
+      .in("report_type", types)
+      .order("reported_at", { ascending: false });
+    if (data.task_id) q = q.eq("task_id", data.task_id);
+    if (data.from) q = q.gte("reported_at", data.from);
+    if (data.to) q = q.lte("reported_at", data.to);
+
+    const { data: reports, error } = await q;
+    if (error) throw new Error(error.message);
+    const rows = (reports ?? []) as any[];
+    const reportIds = rows.map((r) => r.id);
+    const taskIds = Array.from(new Set(rows.map((r) => r.task_id)));
+    const reporterIds = Array.from(
+      new Set(rows.map((r) => r.reported_by).filter(Boolean)),
+    );
+
+    const [attRes, taskRes, profRes] = await Promise.all([
+      reportIds.length
+        ? context.supabase
+            .from("task_report_attachments")
+            .select("id, report_id, storage_path, file_name, mime_type, kind")
+            .in("report_id", reportIds)
+        : Promise.resolve({ data: [], error: null } as any),
+      taskIds.length
+        ? context.supabase
+            .from("tasks")
+            .select(
+              "id, title, description, priority, status, due_date, location_text",
+            )
+            .in("id", taskIds)
+        : Promise.resolve({ data: [], error: null } as any),
+      reporterIds.length
+        ? context.supabase
+            .from("profiles")
+            .select("id, full_name, job_title")
+            .in("id", reporterIds)
+        : Promise.resolve({ data: [], error: null } as any),
+    ]);
+    if (attRes.error) throw new Error(attRes.error.message);
+    if (taskRes.error) throw new Error(taskRes.error.message);
+    if (profRes.error) throw new Error(profRes.error.message);
+
+    // Sign photo URLs
+    const attachments = (attRes.data ?? []) as any[];
+    const signed = await Promise.all(
+      attachments.map(async (a) => {
+        const { data: s } = await context.supabase.storage
+          .from("task-reports")
+          .createSignedUrl(a.storage_path, 3600);
+        return { ...a, url: s?.signedUrl ?? null };
+      }),
+    );
+    const attByReport = new Map<string, any[]>();
+    for (const a of signed) {
+      const arr = attByReport.get(a.report_id) ?? [];
+      arr.push(a);
+      attByReport.set(a.report_id, arr);
+    }
+    const taskById = new Map(
+      ((taskRes.data ?? []) as any[]).map((t) => [t.id, t]),
+    );
+    const profById = new Map(
+      ((profRes.data ?? []) as any[]).map((p) => [p.id, p]),
+    );
+
+    // Group by task
+    const grouped = new Map<string, any>();
+    for (const r of rows) {
+      const task = taskById.get(r.task_id);
+      if (!task) continue;
+      if (!grouped.has(r.task_id)) {
+        grouped.set(r.task_id, { task, reports: [] });
+      }
+      grouped.get(r.task_id)!.reports.push({
+        ...r,
+        reporter: profById.get(r.reported_by) ?? null,
+        attachments: attByReport.get(r.id) ?? [],
+      });
+    }
+    return {
+      totalReports: rows.length,
+      groups: Array.from(grouped.values()),
+    };
+  });

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, FileText, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Printer, Trash2 } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -275,8 +275,18 @@ function TaskDetailPage() {
           ) : null}
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">Laporan Lapangan</CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link
+                  to="/dashboard/reports/print"
+                  search={{ taskId }}
+                  target="_blank"
+                >
+                  <Printer className="h-4 w-4" />
+                  Cetak PDF
+                </Link>
+              </Button>
             </CardHeader>
             <CardContent>
               {reports.isLoading ? (
