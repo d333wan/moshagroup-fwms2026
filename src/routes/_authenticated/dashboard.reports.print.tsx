@@ -27,10 +27,6 @@ const TYPE_LABEL: Record<ReportType, string> = {
   issue: "Masalah / Kendala",
 };
 
-const searchSchema = z.object({
-  taskId: z.string().optional(),
-});
-
 export const Route = createFileRoute("/_authenticated/dashboard/reports/print")(
   {
     head: () => ({
@@ -39,7 +35,10 @@ export const Route = createFileRoute("/_authenticated/dashboard/reports/print")(
         { name: "robots", content: "noindex" },
       ],
     }),
-    validateSearch: zodValidator(searchSchema),
+    validateSearch: (search: Record<string, unknown>) => ({
+      taskId:
+        typeof search.taskId === "string" ? (search.taskId as string) : undefined,
+    }),
     component: PrintReportsPage,
   },
 );
