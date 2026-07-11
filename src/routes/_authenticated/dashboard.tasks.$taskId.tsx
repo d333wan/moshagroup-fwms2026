@@ -197,6 +197,17 @@ function TaskDetailPage() {
               </Button>
             ) : null}
             {canManage ? (
+              <Button asChild variant="outline" size="sm">
+                <Link
+                  to="/dashboard/tasks/$taskId/edit"
+                  params={{ taskId }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
+            ) : null}
+            {canManage ? (
               <Button
                 variant="destructive"
                 size="sm"
