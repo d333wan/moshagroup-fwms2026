@@ -67,6 +67,9 @@ function OfficerEditPage() {
   const [baseLoc, setBaseLoc] = useState<string>("none");
   const [status, setStatus] = useState("available");
   const [notes, setNotes] = useState("");
+  const [nik, setNik] = useState("");
+  const [address, setAddress] = useState("");
+
 
   useEffect(() => {
     if (!q.data) return;
@@ -76,11 +79,14 @@ function OfficerEditPage() {
     setPhone(p.phone ?? "");
     setJobTitle(p.job_title ?? "");
     setEmployeeId(p.employee_id ?? "");
+    setNik((p as any).nik ?? "");
+    setAddress((p as any).address ?? "");
     setDepartment(o?.department ?? "");
     setSkills((o?.skills ?? []).join(", "));
     setBaseLoc(o?.base_location_id ?? "none");
     setStatus(o?.status ?? "available");
     setNotes(o?.notes ?? "");
+
   }, [q.data]);
 
   const save = useMutation({
@@ -92,7 +98,10 @@ function OfficerEditPage() {
           phone: phone || null,
           job_title: jobTitle || null,
           employee_id: employeeId || null,
+          nik: nik || null,
+          address: address || null,
           department: department || null,
+
           skills: skills
             .split(",")
             .map((s) => s.trim())
@@ -216,6 +225,30 @@ function OfficerEditPage() {
                   </Select>
                 </div>
               </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="nik">No. KTP (NIK)</Label>
+                  <Input
+                    id="nik"
+                    value={nik}
+                    onChange={(e) => setNik(e.target.value)}
+                    placeholder="16 digit NIK"
+                    inputMode="numeric"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="addr">Alamat</Label>
+                  <Input
+                    id="addr"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Alamat sesuai KTP"
+                  />
+                </div>
+              </div>
+
+
 
               <div className="grid gap-2">
                 <Label>Lokasi Utama</Label>

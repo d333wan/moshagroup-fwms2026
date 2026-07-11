@@ -145,6 +145,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
           avatar_url: string | null
           created_at: string
           employee_id: string | null
@@ -156,10 +157,12 @@ export type Database = {
           last_login_at: string | null
           locked_at: string | null
           must_change_password: boolean
+          nik: string | null
           phone: string | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
           avatar_url?: string | null
           created_at?: string
           employee_id?: string | null
@@ -171,10 +174,12 @@ export type Database = {
           last_login_at?: string | null
           locked_at?: string | null
           must_change_password?: boolean
+          nik?: string | null
           phone?: string | null
           updated_at?: string
         }
         Update: {
+          address?: string | null
           avatar_url?: string | null
           created_at?: string
           employee_id?: string | null
@@ -186,6 +191,7 @@ export type Database = {
           last_login_at?: string | null
           locked_at?: string | null
           must_change_password?: boolean
+          nik?: string | null
           phone?: string | null
           updated_at?: string
         }

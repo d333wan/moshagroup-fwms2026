@@ -33,9 +33,10 @@ export const listOfficers = createServerFn({ method: "GET" })
     const { data: profiles, error: pErr } = await supabaseAdmin
       .from("profiles")
       .select(
-        "id, full_name, phone, job_title, employee_id, is_active, avatar_url",
+        "id, full_name, phone, job_title, employee_id, is_active, avatar_url, nik, address",
       );
     if (pErr) throw new Error(pErr.message);
+
 
     const { data: roles, error: rErr } = await supabaseAdmin
       .from("user_roles")
@@ -66,6 +67,8 @@ export const listOfficers = createServerFn({ method: "GET" })
           phone: p.phone ?? null,
           job_title: p.job_title ?? null,
           employee_id: p.employee_id ?? null,
+          nik: (p as any).nik ?? null,
+          address: (p as any).address ?? null,
           is_active: p.is_active,
           avatar_url: p.avatar_url ?? null,
           role: roleByUser.get(p.id) ?? "guest",
@@ -75,6 +78,7 @@ export const listOfficers = createServerFn({ method: "GET" })
           status: (o?.status ?? "available") as string,
           notes: o?.notes ?? null,
         };
+
       })
       .sort((a, b) => a.full_name.localeCompare(b.full_name));
   });
@@ -92,8 +96,9 @@ export const getOfficer = createServerFn({ method: "GET" })
     const { data: p, error: pErr } = await supabaseAdmin
       .from("profiles")
       .select(
-        "id, full_name, phone, job_title, employee_id, is_active, avatar_url",
+        "id, full_name, phone, job_title, employee_id, is_active, avatar_url, nik, address",
       )
+
       .eq("id", data.user_id)
       .maybeSingle();
     if (pErr) throw new Error(pErr.message);
@@ -115,7 +120,10 @@ const upsertInput = z.object({
   phone: z.string().max(30).nullable().optional(),
   job_title: z.string().max(120).nullable().optional(),
   employee_id: z.string().max(50).nullable().optional(),
+  nik: z.string().max(32).nullable().optional(),
+  address: z.string().max(500).nullable().optional(),
   department: z.string().max(120).nullable().optional(),
+
   skills: z.array(z.string().max(60)).optional(),
   base_location_id: z.string().uuid().nullable().optional(),
   status: statusSchema.optional(),
@@ -141,6 +149,9 @@ export const upsertOfficer = createServerFn({ method: "POST" })
     if (data.job_title !== undefined) profilePatch.job_title = data.job_title;
     if (data.employee_id !== undefined)
       profilePatch.employee_id = data.employee_id;
+    if (data.nik !== undefined) profilePatch.nik = data.nik;
+    if (data.address !== undefined) profilePatch.address = data.address;
+
     if (Object.keys(profilePatch).length > 0) {
       const { error } = await supabaseAdmin
         .from("profiles")
