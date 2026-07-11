@@ -159,6 +159,7 @@ function NewTaskPage() {
                   type="datetime-local"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
+                  className="due-calendar-input"
                 />
               </div>
             </div>
@@ -231,6 +232,19 @@ function NewTaskPage() {
           </form>
         </CardContent>
       </Card>
+      <style>{`
+        .due-calendar-input::-webkit-calendar-picker-indicator {
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          min-height: 32px;
+          cursor: pointer;
+          opacity: 1;
+        }
+        .due-calendar-input::-webkit-calendar-picker-indicator:hover {
+          opacity: 0.8;
+        }
+      `}</style>
     </DashboardLayout>
   );
 }
