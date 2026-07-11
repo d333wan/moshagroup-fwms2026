@@ -240,9 +240,10 @@ function NewTaskPage() {
           min-height: 32px;
           cursor: pointer;
           opacity: 1;
+          filter: brightness(1.6) saturate(1.8);
         }
         .due-calendar-input::-webkit-calendar-picker-indicator:hover {
-          opacity: 0.8;
+          opacity: 0.85;
         }
       `}</style>
     </DashboardLayout>
