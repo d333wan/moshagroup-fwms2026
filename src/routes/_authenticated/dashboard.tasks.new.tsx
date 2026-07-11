@@ -67,6 +67,17 @@ function NewTaskPage() {
   const [locPickerOpen, setLocPickerOpen] = useState(false);
   const [locSearch, setLocSearch] = useState("");
   const [assignees, setAssignees] = useState<string[]>([]);
+  const [supCompany, setSupCompany] = useState("");
+  const [supPerson, setSupPerson] = useState("");
+  const [supJob, setSupJob] = useState("");
+  const [supPhone, setSupPhone] = useState("");
+  const [supWa, setSupWa] = useState("");
+  const [emergency1, setEmergency1] = useState("");
+  const [emergency2, setEmergency2] = useState("");
+  const [vehType, setVehType] = useState("");
+  const [vehPlate, setVehPlate] = useState("");
+  const [dirMode, setDirMode] = useState<"none" | "single" | "four_way">("single");
+  const [radius, setRadius] = useState<number>(100);
 
   const locations = useQuery({
     queryKey: ["locations"],
