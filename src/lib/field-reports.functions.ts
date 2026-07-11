@@ -47,7 +47,7 @@ async function isAdminTier(context: {
   const { data } = await context.supabase.rpc("get_user_roles", {
     _user_id: context.userId,
   });
-  const roles = ((data ?? []) as string[]) ?? [];
+  const roles = (data ?? []) as string[];
   return roles.includes("super_admin") || roles.includes("admin");
 }
 
