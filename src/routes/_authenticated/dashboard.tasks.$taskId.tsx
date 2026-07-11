@@ -275,8 +275,18 @@ function TaskDetailPage() {
           ) : null}
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">Laporan Lapangan</CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link
+                  to="/dashboard/reports/print"
+                  search={{ taskId }}
+                  target="_blank"
+                >
+                  <Printer className="h-4 w-4" />
+                  Cetak PDF
+                </Link>
+              </Button>
             </CardHeader>
             <CardContent>
               {reports.isLoading ? (
