@@ -67,6 +67,8 @@ export const listOfficers = createServerFn({ method: "GET" })
           phone: p.phone ?? null,
           job_title: p.job_title ?? null,
           employee_id: p.employee_id ?? null,
+          nik: (p as any).nik ?? null,
+          address: (p as any).address ?? null,
           is_active: p.is_active,
           avatar_url: p.avatar_url ?? null,
           role: roleByUser.get(p.id) ?? "guest",
@@ -76,6 +78,7 @@ export const listOfficers = createServerFn({ method: "GET" })
           status: (o?.status ?? "available") as string,
           notes: o?.notes ?? null,
         };
+
       })
       .sort((a, b) => a.full_name.localeCompare(b.full_name));
   });
