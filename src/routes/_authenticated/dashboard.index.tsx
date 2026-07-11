@@ -33,7 +33,11 @@ export const Route = createFileRoute("/_authenticated/dashboard/")({
 });
 
 function DashboardHome() {
-  const { user, roles, isAdmin, isManager, isAdminTier } = useAuth();
+  const { user, roles, isAdmin, isManager, isAdminTier, isSuperAdmin, isPetugas } = useAuth();
+  const petugasOnly = isPetugas && !isAdminTier && !isManager && !isSuperAdmin;
+  if (petugasOnly) {
+    return <Navigate to="/dashboard/my-work" replace />;
+  }
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ??
     user?.email ??
