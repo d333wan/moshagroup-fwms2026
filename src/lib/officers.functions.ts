@@ -33,9 +33,10 @@ export const listOfficers = createServerFn({ method: "GET" })
     const { data: profiles, error: pErr } = await supabaseAdmin
       .from("profiles")
       .select(
-        "id, full_name, phone, job_title, employee_id, is_active, avatar_url",
+        "id, full_name, phone, job_title, employee_id, is_active, avatar_url, nik, address",
       );
     if (pErr) throw new Error(pErr.message);
+
 
     const { data: roles, error: rErr } = await supabaseAdmin
       .from("user_roles")
