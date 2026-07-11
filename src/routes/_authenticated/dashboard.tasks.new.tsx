@@ -160,7 +160,13 @@ function NewTaskPage() {
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="due-calendar-input"
+                  className="due-calendar-input pr-11"
+                  style={{
+                    backgroundImage: `url(${calendarIcon})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 0.6rem center",
+                    backgroundSize: "28px 28px",
+                  }}
                 />
               </div>
             </div>
