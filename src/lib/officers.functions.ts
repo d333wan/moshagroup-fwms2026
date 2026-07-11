@@ -149,6 +149,9 @@ export const upsertOfficer = createServerFn({ method: "POST" })
     if (data.job_title !== undefined) profilePatch.job_title = data.job_title;
     if (data.employee_id !== undefined)
       profilePatch.employee_id = data.employee_id;
+    if (data.nik !== undefined) profilePatch.nik = data.nik;
+    if (data.address !== undefined) profilePatch.address = data.address;
+
     if (Object.keys(profilePatch).length > 0) {
       const { error } = await supabaseAdmin
         .from("profiles")
