@@ -74,6 +74,9 @@ export type Database = {
           latitude: number | null
           longitude: number | null
           name: string
+          notes: string | null
+          photos: string[]
+          pic: string | null
           postal_code: string | null
           province: string | null
           updated_at: string
@@ -89,6 +92,9 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           name: string
+          notes?: string | null
+          photos?: string[]
+          pic?: string | null
           postal_code?: string | null
           province?: string | null
           updated_at?: string
@@ -104,6 +110,9 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           name?: string
+          notes?: string | null
+          photos?: string[]
+          pic?: string | null
           postal_code?: string | null
           province?: string | null
           updated_at?: string
