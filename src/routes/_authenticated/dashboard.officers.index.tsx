@@ -68,14 +68,6 @@ function OfficersPage() {
       <PageHeader
         title="Petugas Lapangan"
         description="Daftar petugas, jabatan, nomor kontak, dan status ketersediaan."
-        actions={
-          <Button asChild size="sm" variant="outline">
-            <Link to="/dashboard/officers/print">
-              <Printer className="h-4 w-4" />
-              Cetak PDF
-            </Link>
-          </Button>
-        }
       />
 
       <Card>
