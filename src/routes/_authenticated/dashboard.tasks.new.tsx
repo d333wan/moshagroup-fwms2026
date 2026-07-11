@@ -327,6 +327,98 @@ function NewTaskPage() {
           display: none;
         }
       `}</style>
+
+      <Dialog open={locPickerOpen} onOpenChange={setLocPickerOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Pilih Lokasi</DialogTitle>
+            <DialogDescription>
+              Pilih lokasi kerja dari data lokasi terdaftar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={locSearch}
+              onChange={(e) => setLocSearch(e.target.value)}
+              placeholder="Cari nama, alamat, kota, PIC…"
+              className="pl-9"
+            />
+          </div>
+          <div className="max-h-[60vh] overflow-auto rounded-md border">
+            <Table>
+              <TableHeader className="sticky top-0 bg-background">
+                <TableRow>
+                  <TableHead>Nama</TableHead>
+                  <TableHead>Alamat</TableHead>
+                  <TableHead>Kota</TableHead>
+                  <TableHead>PIC</TableHead>
+                  <TableHead>Koordinat</TableHead>
+                  <TableHead className="w-24 text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {locations.isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-6 text-center text-sm text-muted-foreground">
+                      Memuat…
+                    </TableCell>
+                  </TableRow>
+                ) : filteredLocs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-6 text-center text-sm text-muted-foreground">
+                      Tidak ada lokasi.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredLocs.map((l: any) => (
+                    <TableRow
+                      key={l.id}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setSelectedLoc(l);
+                        setLocation(
+                          [l.name, l.address, l.city].filter(Boolean).join(", "),
+                        );
+                        setLocPickerOpen(false);
+                      }}
+                    >
+                      <TableCell className="font-medium">{l.name}</TableCell>
+                      <TableCell className="max-w-[240px] truncate text-xs text-muted-foreground">
+                        {l.address || "—"}
+                      </TableCell>
+                      <TableCell className="text-xs">{l.city || "—"}</TableCell>
+                      <TableCell className="text-xs">{l.pic || "—"}</TableCell>
+                      <TableCell className="text-xs">
+                        {l.latitude != null && l.longitude != null
+                          ? `${Number(l.latitude).toFixed(4)}, ${Number(l.longitude).toFixed(4)}`
+                          : "—"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLoc(l);
+                            setLocation(
+                              [l.name, l.address, l.city].filter(Boolean).join(", "),
+                            );
+                            setLocPickerOpen(false);
+                          }}
+                        >
+                          Pilih
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
