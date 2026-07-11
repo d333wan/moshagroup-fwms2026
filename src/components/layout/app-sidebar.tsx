@@ -41,12 +41,15 @@ const mainNav: NavItem[] = [
 
 const petugasNav: NavItem[] = [
   { label: "Dashboard Petugas", to: "/dashboard/my-work", icon: HardHat },
+  { label: "Laporan Lapangan", to: "/dashboard/field-reports", icon: ClipboardCheck },
   { label: "Notifikasi", to: "/dashboard/notifications", icon: Bell },
 ];
 
 const moduleNav: NavItem[] = [
   { label: "Dashboard Petugas", to: "/dashboard/my-work", icon: HardHat },
   { label: "Penugasan", to: "/dashboard/tasks", icon: ClipboardList },
+  { label: "Laporan Lapangan", to: "/dashboard/field-reports", icon: ClipboardCheck },
+  { label: "Laporan Petugas (Admin)", to: "/dashboard/field-reports/admin", icon: FileText },
   { label: "Petugas Lapangan", to: "/dashboard/officers", icon: Users },
   { label: "Lokasi", to: "/dashboard/locations", icon: MapPin },
   { label: "Notifikasi", to: "/dashboard/notifications", icon: Bell },
