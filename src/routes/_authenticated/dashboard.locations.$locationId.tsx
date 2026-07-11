@@ -14,6 +14,7 @@ import { Loading } from "@/components/common/loading";
 import { getLocation, upsertLocation } from "@/lib/locations.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { AttachmentsPanel } from "@/components/common/attachments-panel";
 
 const MAX_PHOTOS = 4;
 const BUCKET = "location-photos";
@@ -309,6 +310,21 @@ function LocationEditPage() {
                   </div>
                 )}
               </div>
+
+              {!isNew ? (
+                <div className="grid gap-2 pt-2">
+                  <Label>Surat Tugas & Dokumen Lokasi</Label>
+                  <AttachmentsPanel
+                    scope="location"
+                    parentId={locationId}
+                    canUpload={isAdminTier || isManager}
+                    canDelete={isAdminTier || isManager}
+                    emptyText="Belum ada dokumen di lokasi ini."
+                  />
+                </div>
+              ) : null}
+
+
 
               <div className="flex justify-end gap-2 pt-2">
                 <Button type="button" variant="outline" onClick={() => navigate({ to: "/dashboard/locations" })}>

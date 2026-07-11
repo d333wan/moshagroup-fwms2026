@@ -30,6 +30,7 @@ import {
   FIELD_WORK_STATUS_VALUES,
 } from "@/lib/field-reports.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { AttachmentsPanel } from "@/components/common/attachments-panel";
 
 export const Route = createFileRoute(
   "/_authenticated/dashboard/field-reports/new/$taskId",
@@ -275,6 +276,38 @@ function NewFieldReportPage() {
           ) : null}
         </CardContent>
       </Card>
+
+      {/* Surat tugas & dokumen lokasi (read-only) */}
+      <Card className="mb-3">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Surat Tugas & Dokumen</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          <AttachmentsPanel
+            scope="task"
+            parentId={taskId}
+            canUpload={false}
+            canDelete={false}
+            title="Dokumen Penugasan"
+            emptyText="Tidak ada dokumen penugasan."
+          />
+          {task.location_id ? (
+            <AttachmentsPanel
+              scope="location"
+              parentId={task.location_id}
+              canUpload={false}
+              canDelete={false}
+              title="Dokumen Lokasi"
+              emptyText="Tidak ada dokumen lokasi."
+            />
+          ) : null}
+          <p className="text-xs text-muted-foreground">
+            Setelah menyimpan laporan, buka detail untuk mengunggah hingga 4
+            dokumen PDF pendukung.
+          </p>
+        </CardContent>
+      </Card>
+
 
       <form
         className="grid gap-4"
