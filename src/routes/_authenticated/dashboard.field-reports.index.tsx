@@ -128,17 +128,17 @@ function FieldReportsPage() {
                 key={r.id}
                 to="/dashboard/field-reports/$reportId"
                 params={{ reportId: r.id }}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3 hover:bg-accent/40"
+                className="flex flex-col gap-2 rounded-md border p-3 hover:bg-accent/40 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
               >
-                <div className="min-w-0">
-                  <div className="truncate font-medium">
+                <div className="min-w-0 flex-1">
+                  <div className="break-words font-medium text-sm">
                     {r.report_number} · {r.task?.title ?? "—"}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="break-words text-xs text-muted-foreground">
                     {r.report_date} {r.report_time?.slice(0, 5)} · {FIELD_WORK_STATUS_LABEL[r.work_status as keyof typeof FIELD_WORK_STATUS_LABEL]} · Progres {r.progress_percent}%
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {r.has_obstacle ? <Badge variant="destructive">Kendala</Badge> : null}
                   {r.within_radius === false ? <Badge variant="outline">Di luar radius</Badge> : null}
                   <Badge>{FIELD_REPORT_STATUS_LABEL[r.status as keyof typeof FIELD_REPORT_STATUS_LABEL]}</Badge>
