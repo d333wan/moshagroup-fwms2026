@@ -20,12 +20,13 @@ export const listLocations = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("locations")
       .select(
-        "id, name, address, city, province, postal_code, latitude, longitude, category, is_active, created_at",
+        "id, name, address, city, province, postal_code, latitude, longitude, category, is_active, created_at, pic, notes, photos",
       )
       .order("name", { ascending: true });
     if (error) throw new Error(error.message);
     return (data ?? []) as any[];
   });
+
 
 export const getLocation = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
