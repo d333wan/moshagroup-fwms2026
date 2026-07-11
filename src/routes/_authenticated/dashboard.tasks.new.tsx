@@ -100,6 +100,7 @@ function NewTaskPage() {
           status: "draft",
           due_date: dueDate ? new Date(dueDate).toISOString() : null,
           location_text: location || null,
+          location_id: selectedLoc?.id || null,
           assignee_ids: assignees,
         },
       }),
