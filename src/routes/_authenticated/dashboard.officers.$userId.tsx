@@ -98,7 +98,10 @@ function OfficerEditPage() {
           phone: phone || null,
           job_title: jobTitle || null,
           employee_id: employeeId || null,
+          nik: nik || null,
+          address: address || null,
           department: department || null,
+
           skills: skills
             .split(",")
             .map((s) => s.trim())
