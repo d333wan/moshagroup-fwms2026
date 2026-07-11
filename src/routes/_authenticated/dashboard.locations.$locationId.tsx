@@ -14,6 +14,7 @@ import { Loading } from "@/components/common/loading";
 import { getLocation, upsertLocation } from "@/lib/locations.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { AttachmentsPanel } from "@/components/common/attachments-panel";
 
 const MAX_PHOTOS = 4;
 const BUCKET = "location-photos";
