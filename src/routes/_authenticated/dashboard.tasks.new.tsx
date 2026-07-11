@@ -156,7 +156,7 @@ function NewTaskPage() {
                 <Label htmlFor="due">Jatuh Tempo</Label>
                 <Input
                   id="due"
-                  type="datetime-local"
+                  type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                   className="due-calendar-input"
