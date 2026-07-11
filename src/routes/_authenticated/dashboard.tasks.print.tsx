@@ -275,13 +275,21 @@ function PrintAssignmentsPage() {
                       <TableCell>
                         <StatusBadge
                           status={r.status}
-                          label={TASK_STATUS_LABEL[r.status] ?? r.status}
+                          label={
+                            TASK_STATUS_LABEL[
+                              r.status as keyof typeof TASK_STATUS_LABEL
+                            ] ?? r.status
+                          }
                         />
                       </TableCell>
                       <TableCell>
                         <StatusBadge
                           status={r.priority}
-                          label={TASK_PRIORITY_LABEL[r.priority] ?? r.priority}
+                          label={
+                            TASK_PRIORITY_LABEL[
+                              r.priority as keyof typeof TASK_PRIORITY_LABEL
+                            ] ?? r.priority
+                          }
                         />
                       </TableCell>
                       <TableCell>
