@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MapPin, Search } from "lucide-react";
 import calendarIcon from "@/assets/calendar-picker-icon.png";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
@@ -19,7 +19,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { createTask, listAssignableUsers } from "@/lib/tasks.functions";
+import { listLocations } from "@/lib/locations.functions";
 import {
   TASK_PRIORITY_LABEL,
   TASK_PRIORITY_VALUES,
@@ -47,7 +63,27 @@ function NewTaskPage() {
   const [priority, setPriority] = useState<string>("medium");
   const [dueDate, setDueDate] = useState<string>("");
   const [location, setLocation] = useState("");
+  const [selectedLoc, setSelectedLoc] = useState<any | null>(null);
+  const [locPickerOpen, setLocPickerOpen] = useState(false);
+  const [locSearch, setLocSearch] = useState("");
   const [assignees, setAssignees] = useState<string[]>([]);
+
+  const locations = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => listLocations(),
+    enabled: locPickerOpen,
+  });
+
+  const filteredLocs = useMemo(() => {
+    const list = (locations.data ?? []) as any[];
+    const q = locSearch.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((l) =>
+      [l.name, l.address, l.city, l.province, l.pic, l.category]
+        .filter(Boolean)
+        .some((v: string) => String(v).toLowerCase().includes(q)),
+    );
+  }, [locations.data, locSearch]);
 
   const users = useQuery({
     queryKey: ["assignable-users"],
@@ -173,12 +209,54 @@ function NewTaskPage() {
 
             <div className="grid gap-2">
               <Label htmlFor="loc">Lokasi</Label>
-              <Input
-                id="loc"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Alamat / titik kerja"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="loc"
+                  value={location}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                    setSelectedLoc(null);
+                  }}
+                  placeholder="Pilih dari data lokasi atau ketik manual"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setLocPickerOpen(true)}
+                >
+                  <MapPin className="h-4 w-4" />
+                  Pilih Lokasi
+                </Button>
+              </div>
+              {selectedLoc ? (
+                <div className="rounded-md border bg-muted/40 p-3 text-sm">
+                  <div className="font-medium">{selectedLoc.name}</div>
+                  <div className="mt-1 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                    <div>
+                      <span className="font-medium text-foreground">Alamat: </span>
+                      {[selectedLoc.address, selectedLoc.city, selectedLoc.province, selectedLoc.postal_code]
+                        .filter(Boolean)
+                        .join(", ") || "—"}
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">PIC: </span>
+                      {selectedLoc.pic || "—"}
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Koordinat: </span>
+                      {selectedLoc.latitude != null && selectedLoc.longitude != null
+                        ? `${Number(selectedLoc.latitude).toFixed(6)}, ${Number(selectedLoc.longitude).toFixed(6)}`
+                        : "—"}
+                    </div>
+                    {selectedLoc.category ? (
+                      <div>
+                        <span className="font-medium text-foreground">Kategori: </span>
+                        {selectedLoc.category}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <div className="grid gap-2">
@@ -249,6 +327,98 @@ function NewTaskPage() {
           display: none;
         }
       `}</style>
+
+      <Dialog open={locPickerOpen} onOpenChange={setLocPickerOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Pilih Lokasi</DialogTitle>
+            <DialogDescription>
+              Pilih lokasi kerja dari data lokasi terdaftar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={locSearch}
+              onChange={(e) => setLocSearch(e.target.value)}
+              placeholder="Cari nama, alamat, kota, PIC…"
+              className="pl-9"
+            />
+          </div>
+          <div className="max-h-[60vh] overflow-auto rounded-md border">
+            <Table>
+              <TableHeader className="sticky top-0 bg-background">
+                <TableRow>
+                  <TableHead>Nama</TableHead>
+                  <TableHead>Alamat</TableHead>
+                  <TableHead>Kota</TableHead>
+                  <TableHead>PIC</TableHead>
+                  <TableHead>Koordinat</TableHead>
+                  <TableHead className="w-24 text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {locations.isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-6 text-center text-sm text-muted-foreground">
+                      Memuat…
+                    </TableCell>
+                  </TableRow>
+                ) : filteredLocs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-6 text-center text-sm text-muted-foreground">
+                      Tidak ada lokasi.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredLocs.map((l: any) => (
+                    <TableRow
+                      key={l.id}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setSelectedLoc(l);
+                        setLocation(
+                          [l.name, l.address, l.city].filter(Boolean).join(", "),
+                        );
+                        setLocPickerOpen(false);
+                      }}
+                    >
+                      <TableCell className="font-medium">{l.name}</TableCell>
+                      <TableCell className="max-w-[240px] truncate text-xs text-muted-foreground">
+                        {l.address || "—"}
+                      </TableCell>
+                      <TableCell className="text-xs">{l.city || "—"}</TableCell>
+                      <TableCell className="text-xs">{l.pic || "—"}</TableCell>
+                      <TableCell className="text-xs">
+                        {l.latitude != null && l.longitude != null
+                          ? `${Number(l.latitude).toFixed(4)}, ${Number(l.longitude).toFixed(4)}`
+                          : "—"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLoc(l);
+                            setLocation(
+                              [l.name, l.address, l.city].filter(Boolean).join(", "),
+                            );
+                            setLocPickerOpen(false);
+                          }}
+                        >
+                          Pilih
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
