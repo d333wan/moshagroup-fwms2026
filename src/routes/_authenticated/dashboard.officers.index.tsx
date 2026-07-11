@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Printer } from "lucide-react";
+
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -68,14 +68,6 @@ function OfficersPage() {
       <PageHeader
         title="Petugas Lapangan"
         description="Daftar petugas, jabatan, nomor kontak, dan status ketersediaan."
-        actions={
-          <Button asChild size="sm" variant="outline">
-            <Link to="/dashboard/officers/print">
-              <Printer className="h-4 w-4" />
-              Cetak PDF
-            </Link>
-          </Button>
-        }
       />
 
       <Card>
