@@ -5,4 +5,7 @@ export const COMPANY_DESCRIPTION =
   "PT. MOSHA SERI NUSANTARA is a trusted telecommunication company delivering professional works for wired/wireless network Service and IT/Data Technology.";
 export const COMPANY_WEBSITE = "https://moshagroup.co.id/";
 export const COMPANY_LOGO_URL = logoAsset.url;
+export const COMPANY_ADDRESS =
+  "PT. MOSHA KARYA SINERGI, Jl. Pendem, Kalitirto, Berbah, Sleman, Daerah Istimewa Yogyakarta";
+
 

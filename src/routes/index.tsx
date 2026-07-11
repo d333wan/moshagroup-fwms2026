@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import androidPhone from "@/assets/android-phone-mockup.png";
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
+import { COMPANY_ADDRESS } from "@/lib/company";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -236,6 +237,25 @@ function LandingPage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </section>
+
+        <section
+          id="alamat"
+          className="border-t border-border bg-muted/40"
+        >
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <MapPin className="h-6 w-6" />
+              </div>
+              <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                Kantor Pusat
+              </h2>
+              <p className="mt-4 text-base text-muted-foreground">
+                {COMPANY_ADDRESS}
+              </p>
+            </div>
           </div>
         </section>
       </Dialog>
