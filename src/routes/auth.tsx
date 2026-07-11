@@ -60,18 +60,10 @@ function AuthPage() {
             <CardTitle>Akses Akun</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Masuk</TabsTrigger>
-                <TabsTrigger value="signup">Daftar</TabsTrigger>
-              </TabsList>
-              <TabsContent value="signin" className="pt-4">
-                <SignInForm />
-              </TabsContent>
-              <TabsContent value="signup" className="pt-4">
-                <SignUpForm />
-              </TabsContent>
-            </Tabs>
+            <SignInForm />
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              Pendaftaran akun hanya dilakukan oleh Admin / Super Admin.
+            </p>
           </CardContent>
         </Card>
         <p className="mt-4 text-center text-xs text-muted-foreground">
