@@ -131,11 +131,26 @@ export function PrintStyles({ landscape = false }: { landscape?: boolean }) {
           margin: 0 !important; padding: 0 !important; max-width: none !important; min-height: 0 !important;
         }
         .print-card { box-shadow: none !important; }
-        .print-cover { min-height: ${landscape ? "150mm" : "240mm"}; break-after: page; page-break-after: always; }
+        .print-cover {
+          min-height: 0 !important;
+          padding: 10px !important;
+          break-after: page;
+          page-break-after: always;
+        }
+        .print-cover .band { margin-bottom: 12px; }
+        .print-cover .logo { height: 56px; margin-bottom: 8px; }
+        .print-cover .company { font-size: 16px; }
+        .print-cover .company-addr { font-size: 10px; max-width: 420px; }
+        .print-cover .doc-title { margin-top: 16px; font-size: 22px; }
+        .print-cover .doc-sub { margin-top: 4px; font-size: 12px; }
+        .print-cover .stats { margin-top: 16px; max-width: 520px; }
+        .print-cover .stat { padding: 8px 6px; }
+        .print-cover .stat .n { font-size: 16px; }
+        .print-cover .kv { margin-top: 16px; padding-top: 10px; max-width: 420px; }
         .page-break { break-before: page; page-break-before: always; }
         .avoid-break, .print-card, .task-block, .report-card, .loc-block { break-inside: avoid; page-break-inside: avoid; }
-        table { font-size: 13px; }
-        th, td { padding: 8px 10px !important; }
+        table { font-size: 12px; }
+        th, td { padding: 6px 8px !important; }
         thead { display: table-header-group; }
         tr, img { break-inside: avoid; page-break-inside: avoid; }
       }
