@@ -270,7 +270,15 @@ export const adminResetPassword = createServerFn({ method: "POST" })
       data.user_id,
       { password: data.new_password },
     );
-    if (error) throw new Error(error.message);
+    if (error) {
+      const msg = error.message || "";
+      if (/weak|pwned|known to be|leaked|compromised/i.test(msg)) {
+        throw new Error(
+          "Password terlalu lemah atau pernah bocor. Gunakan kombinasi huruf besar/kecil, angka, dan simbol (min. 8 karakter) yang unik.",
+        );
+      }
+      throw new Error(msg);
+    }
     if (data.require_change) {
       await supabaseAdmin
         .from("profiles")
