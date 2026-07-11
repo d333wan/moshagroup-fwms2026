@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   UserCog,
   HardHat,
+  Printer,
 } from "lucide-react";
 import {
   Sidebar,
