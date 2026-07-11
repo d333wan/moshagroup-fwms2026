@@ -67,6 +67,17 @@ function NewTaskPage() {
   const [locPickerOpen, setLocPickerOpen] = useState(false);
   const [locSearch, setLocSearch] = useState("");
   const [assignees, setAssignees] = useState<string[]>([]);
+  const [supCompany, setSupCompany] = useState("");
+  const [supPerson, setSupPerson] = useState("");
+  const [supJob, setSupJob] = useState("");
+  const [supPhone, setSupPhone] = useState("");
+  const [supWa, setSupWa] = useState("");
+  const [emergency1, setEmergency1] = useState("");
+  const [emergency2, setEmergency2] = useState("");
+  const [vehType, setVehType] = useState("");
+  const [vehPlate, setVehPlate] = useState("");
+  const [dirMode, setDirMode] = useState<"none" | "single" | "four_way">("single");
+  const [radius, setRadius] = useState<number>(100);
 
   const locations = useQuery({
     queryKey: ["locations"],
@@ -102,6 +113,17 @@ function NewTaskPage() {
           location_text: location || null,
           location_id: selectedLoc?.id || null,
           assignee_ids: assignees,
+          supervisor_company_name: supCompany || null,
+          supervisor_person_name: supPerson || null,
+          supervisor_job_title: supJob || null,
+          supervisor_phone: supPhone || null,
+          supervisor_whatsapp: supWa || null,
+          emergency_contact_primary: emergency1 || null,
+          emergency_contact_secondary: emergency2 || null,
+          default_vehicle_type: vehType || null,
+          default_license_plate: vehPlate || null,
+          photo_direction_mode: dirMode,
+          radius_meters: radius,
         },
       }),
     onSuccess: (res) => {
@@ -259,6 +281,43 @@ function NewTaskPage() {
                 </div>
               ) : null}
             </div>
+
+            <details className="rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Supervisor Perusahaan & Kontak Darurat (opsional)</summary>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div><Label>Nama Perusahaan</Label><Input value={supCompany} onChange={(e) => setSupCompany(e.target.value)} /></div>
+                <div><Label>Nama Supervisor</Label><Input value={supPerson} onChange={(e) => setSupPerson(e.target.value)} /></div>
+                <div><Label>Jabatan</Label><Input value={supJob} onChange={(e) => setSupJob(e.target.value)} /></div>
+                <div><Label>Telepon Supervisor</Label><Input value={supPhone} onChange={(e) => setSupPhone(e.target.value)} /></div>
+                <div><Label>WhatsApp Supervisor</Label><Input value={supWa} onChange={(e) => setSupWa(e.target.value)} placeholder="6281..." /></div>
+                <div><Label>Kontak Darurat Utama</Label><Input value={emergency1} onChange={(e) => setEmergency1(e.target.value)} /></div>
+                <div><Label>Kontak Darurat Cadangan</Label><Input value={emergency2} onChange={(e) => setEmergency2(e.target.value)} /></div>
+              </div>
+            </details>
+
+            <details className="rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Kendaraan & Dokumentasi (opsional)</summary>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div><Label>Jenis Kendaraan</Label><Input value={vehType} onChange={(e) => setVehType(e.target.value)} /></div>
+                <div><Label>Nomor Plat</Label><Input value={vehPlate} onChange={(e) => setVehPlate(e.target.value)} /></div>
+                <div>
+                  <Label>Mode Dokumentasi Foto Arah</Label>
+                  <Select value={dirMode} onValueChange={(v) => setDirMode(v as any)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="single">Foto lokasi biasa</SelectItem>
+                      <SelectItem value="four_way">Empat arah</SelectItem>
+                      <SelectItem value="none">Tidak diperlukan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Radius Toleransi (meter)</Label>
+                  <Input type="number" min={10} max={10000} value={radius} onChange={(e) => setRadius(Number(e.target.value) || 100)} />
+                </div>
+              </div>
+            </details>
+
 
             <div className="grid gap-2">
               <Label>Petugas</Label>

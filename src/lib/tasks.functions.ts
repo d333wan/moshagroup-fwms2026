@@ -103,7 +103,7 @@ export const getTask = createServerFn({ method: "GET" })
     const { data: task, error } = await context.supabase
       .from("tasks")
       .select(
-        "id, title, description, priority, status, due_date, location_text, created_by, created_at, updated_at",
+        "id, title, description, priority, status, due_date, location_text, location_id, created_by, created_at, updated_at, radius_meters, supervisor_company_name, supervisor_person_name, supervisor_job_title, supervisor_phone, supervisor_whatsapp, emergency_contact_primary, emergency_contact_secondary, default_vehicle_type, default_license_plate, photo_direction_mode",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -133,6 +133,20 @@ export const getTask = createServerFn({ method: "GET" })
   });
 
 // -------- create task --------
+const supervisorFields = {
+  supervisor_company_name: z.string().max(200).nullable().optional(),
+  supervisor_person_name: z.string().max(200).nullable().optional(),
+  supervisor_job_title: z.string().max(200).nullable().optional(),
+  supervisor_phone: z.string().max(40).nullable().optional(),
+  supervisor_whatsapp: z.string().max(40).nullable().optional(),
+  emergency_contact_primary: z.string().max(40).nullable().optional(),
+  emergency_contact_secondary: z.string().max(40).nullable().optional(),
+  default_vehicle_type: z.string().max(80).nullable().optional(),
+  default_license_plate: z.string().max(30).nullable().optional(),
+  photo_direction_mode: z.enum(["none", "single", "four_way"]).optional(),
+  radius_meters: z.number().int().min(10).max(10000).optional(),
+};
+
 const createInput = z.object({
   title: z.string().min(3).max(200),
   description: z.string().max(4000).optional().nullable(),
@@ -142,6 +156,7 @@ const createInput = z.object({
   location_text: z.string().max(500).optional().nullable(),
   location_id: z.string().uuid().optional().nullable(),
   assignee_ids: z.array(z.string().uuid()).default([]),
+  ...supervisorFields,
 });
 
 export const createTask = createServerFn({ method: "POST" })
@@ -156,13 +171,14 @@ export const createTask = createServerFn({ method: "POST" })
         ? "assigned"
         : data.status;
 
+    const { assignee_ids, ...rest } = data;
+
     const { data: inserted, error } = await context.supabase
       .from("tasks")
       .insert({
-        title: data.title,
-        description: data.description ?? null,
-        priority: data.priority,
+        ...rest,
         status: initialStatus,
+        description: data.description ?? null,
         due_date: data.due_date ?? null,
         location_text: data.location_text ?? null,
         location_id: data.location_id ?? null,
@@ -172,8 +188,8 @@ export const createTask = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
-    if (data.assignee_ids.length > 0) {
-      const rows = data.assignee_ids.map((uid) => ({
+    if (assignee_ids.length > 0) {
+      const rows = assignee_ids.map((uid) => ({
         task_id: inserted.id,
         assignee_id: uid,
         assigned_by: context.userId,
@@ -196,6 +212,7 @@ const updateInput = z.object({
     status: statusSchema.optional(),
     due_date: z.string().datetime().nullable().optional(),
     location_text: z.string().max(500).nullable().optional(),
+    ...supervisorFields,
   }),
 });
 

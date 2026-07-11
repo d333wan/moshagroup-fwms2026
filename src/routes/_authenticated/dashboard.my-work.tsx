@@ -201,12 +201,12 @@ function MyWorkPage() {
                         )}
                       </div>
                     </div>
-                    <Button size="sm" variant="outline" asChild>
+                    <Button size="sm" asChild>
                       <Link
-                        to="/dashboard/tasks/$taskId/reports/new"
+                        to="/dashboard/field-reports/new/$taskId"
                         params={{ taskId: t.id }}
                       >
-                        Lapor
+                        Buat Laporan
                       </Link>
                     </Button>
                   </li>
