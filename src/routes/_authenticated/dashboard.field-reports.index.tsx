@@ -70,7 +70,7 @@ function FieldReportsPage() {
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-4">
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-4">
         <Kpi label="Tugas Aktif" value={kpi.active} icon={FileText} />
         <Kpi label="Laporan Hari Ini" value={kpi.today} icon={Send} />
         <Kpi label="Draft" value={kpi.draft} icon={FileText} />
@@ -90,15 +90,22 @@ function FieldReportsPage() {
             (myTasks.data ?? [])
               .filter((t: any) => t.status !== "completed" && t.status !== "cancelled")
               .map((t: any) => (
-                <div key={t.id} className="flex items-center justify-between gap-3 rounded-md border p-3">
-                  <div className="min-w-0">
-                    <div className="truncate font-medium">{t.title}</div>
-                    <div className="truncate text-xs text-muted-foreground">
+                <div
+                  key={t.id}
+                  className="flex flex-col gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="break-words font-medium text-sm sm:text-base">{t.title}</div>
+                    <div className="break-words text-xs text-muted-foreground sm:text-sm">
                       <MapPin className="inline h-3 w-3" /> {t.location_text ?? "—"}
                     </div>
                   </div>
-                  <Link to="/dashboard/field-reports/new/$taskId" params={{ taskId: t.id }}>
-                    <Button size="sm" variant="secondary">
+                  <Link
+                    to="/dashboard/field-reports/new/$taskId"
+                    params={{ taskId: t.id }}
+                    className="w-full sm:w-auto shrink-0"
+                  >
+                    <Button size="sm" variant="secondary" className="w-full sm:w-auto">
                       <Plus className="h-4 w-4" /> Buat Laporan
                     </Button>
                   </Link>
@@ -121,17 +128,17 @@ function FieldReportsPage() {
                 key={r.id}
                 to="/dashboard/field-reports/$reportId"
                 params={{ reportId: r.id }}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3 hover:bg-accent/40"
+                className="flex flex-col gap-2 rounded-md border p-3 hover:bg-accent/40 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
               >
-                <div className="min-w-0">
-                  <div className="truncate font-medium">
+                <div className="min-w-0 flex-1">
+                  <div className="break-words font-medium text-sm">
                     {r.report_number} · {r.task?.title ?? "—"}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="break-words text-xs text-muted-foreground">
                     {r.report_date} {r.report_time?.slice(0, 5)} · {FIELD_WORK_STATUS_LABEL[r.work_status as keyof typeof FIELD_WORK_STATUS_LABEL]} · Progres {r.progress_percent}%
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {r.has_obstacle ? <Badge variant="destructive">Kendala</Badge> : null}
                   {r.within_radius === false ? <Badge variant="outline">Di luar radius</Badge> : null}
                   <Badge>{FIELD_REPORT_STATUS_LABEL[r.status as keyof typeof FIELD_REPORT_STATUS_LABEL]}</Badge>

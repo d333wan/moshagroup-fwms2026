@@ -13,9 +13,9 @@ export function DashboardLayout({ children, breadcrumbs }: DashboardLayoutProps)
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0 max-w-full overflow-x-hidden">
         <AppHeader breadcrumbs={breadcrumbs} />
-        <main className="flex-1 bg-background px-4 py-8 sm:px-6 lg:px-10">{children}</main>
+        <main className="min-w-0 max-w-full flex-1 overflow-x-hidden bg-background px-4 py-8 sm:px-6 lg:px-10">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
