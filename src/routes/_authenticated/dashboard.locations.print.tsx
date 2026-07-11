@@ -88,7 +88,7 @@ function PrintLocationsPage() {
               </Button>
               <Button
                 size="sm"
-                onClick={() => window.print()}
+                onClick={() => printWithFilename("Daftar-Lokasi")}
                 disabled={rows.length === 0}
               >
                 <Printer className="h-4 w-4" />
