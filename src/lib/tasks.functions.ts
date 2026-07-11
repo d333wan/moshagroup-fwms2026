@@ -322,3 +322,110 @@ export const listAssignableUsers = createServerFn({ method: "GET" })
       };
     });
   });
+
+// -------- list assignments for print report --------
+const printInput = z.object({
+  status: statusSchema.optional(),
+  priority: prioritySchema.optional(),
+  from: z.string().optional().nullable(),
+  to: z.string().optional().nullable(),
+});
+
+export const listAssignmentsForPrint = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => printInput.parse(d))
+  .handler(async ({ data, context }) => {
+    let q = context.supabase
+      .from("tasks")
+      .select(
+        "id, title, priority, status, due_date, location_text, location_id, created_by, created_at",
+      )
+      .order("created_at", { ascending: false });
+
+    if (data?.status) q = q.eq("status", data.status);
+    if (data?.priority) q = q.eq("priority", data.priority);
+    if (data?.from) q = q.gte("created_at", data.from);
+    if (data?.to) q = q.lte("created_at", data.to);
+
+    const { data: tasks, error } = await q;
+    if (error) throw new Error(error.message);
+    const rows = (tasks ?? []) as any[];
+
+    const taskIds = rows.map((t) => t.id);
+    const locationIds = Array.from(
+      new Set(rows.map((t) => t.location_id).filter(Boolean)),
+    );
+
+    const [assignRes, locRes] = await Promise.all([
+      taskIds.length
+        ? context.supabase
+            .from("task_assignments")
+            .select("task_id, assignee_id")
+            .in("task_id", taskIds)
+        : Promise.resolve({ data: [], error: null } as any),
+      locationIds.length
+        ? context.supabase
+            .from("locations")
+            .select("id, name, address, city, province, latitude, longitude")
+            .in("id", locationIds)
+        : Promise.resolve({ data: [], error: null } as any),
+    ]);
+    if (assignRes.error) throw new Error(assignRes.error.message);
+    if (locRes.error) throw new Error(locRes.error.message);
+
+    const assignments = (assignRes.data ?? []) as any[];
+    const assigneeIds = Array.from(
+      new Set(assignments.map((a) => a.assignee_id).filter(Boolean)),
+    );
+    let profileById = new Map<string, any>();
+    if (assigneeIds.length > 0) {
+      const { data: pRows, error: pErr } = await context.supabase
+        .from("profiles")
+        .select("id, full_name, job_title, phone")
+        .in("id", assigneeIds);
+      if (pErr) throw new Error(pErr.message);
+      profileById = new Map(
+        ((pRows ?? []) as any[]).map((p) => [p.id, p]),
+      );
+    }
+
+    const locById = new Map(
+      ((locRes.data ?? []) as any[]).map((l) => [l.id, l]),
+    );
+    const assignsByTask = new Map<string, any[]>();
+    for (const a of assignments) {
+      const arr = assignsByTask.get(a.task_id) ?? [];
+      const profile = profileById.get(a.assignee_id);
+      arr.push({
+        assignee_id: a.assignee_id,
+        full_name: profile?.full_name ?? "",
+        job_title: profile?.job_title ?? null,
+        phone: profile?.phone ?? null,
+      });
+      assignsByTask.set(a.task_id, arr);
+    }
+
+    return rows.map((t) => {
+      const loc = t.location_id ? locById.get(t.location_id) : null;
+      return {
+        id: t.id as string,
+        title: t.title as string,
+        priority: t.priority as TaskPriority,
+        status: t.status as TaskStatus,
+        due_date: (t.due_date as string | null) ?? null,
+        created_at: t.created_at as string,
+        location_text: (t.location_text as string | null) ?? null,
+        location: loc
+          ? {
+              name: loc.name as string,
+              address: (loc.address as string | null) ?? null,
+              city: (loc.city as string | null) ?? null,
+              province: (loc.province as string | null) ?? null,
+              latitude: (loc.latitude as number | null) ?? null,
+              longitude: (loc.longitude as number | null) ?? null,
+            }
+          : null,
+        assignees: assignsByTask.get(t.id) ?? [],
+      };
+    });
+  });
