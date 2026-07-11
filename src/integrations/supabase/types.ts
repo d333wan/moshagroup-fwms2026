@@ -148,6 +148,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           employee_id: string | null
+          failed_login_attempts: number
           full_name: string | null
           id: string
           is_active: boolean
@@ -162,6 +163,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           employee_id?: string | null
+          failed_login_attempts?: number
           full_name?: string | null
           id: string
           is_active?: boolean
@@ -176,6 +178,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           employee_id?: string | null
+          failed_login_attempts?: number
           full_name?: string | null
           id?: string
           is_active?: boolean
@@ -425,6 +428,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_account_locked: { Args: { _email: string }; Returns: boolean }
       count_active_super_admins: { Args: never; Returns: number }
       get_user_roles: {
         Args: { _user_id: string }
@@ -458,6 +462,8 @@ export type Database = {
           user_id: string
         }[]
       }
+      record_failed_login: { Args: { _email: string }; Returns: Json }
+      reset_failed_logins: { Args: { _user_id: string }; Returns: undefined }
     }
     Enums: {
       app_role:
