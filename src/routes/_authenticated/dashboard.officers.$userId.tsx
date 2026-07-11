@@ -67,6 +67,9 @@ function OfficerEditPage() {
   const [baseLoc, setBaseLoc] = useState<string>("none");
   const [status, setStatus] = useState("available");
   const [notes, setNotes] = useState("");
+  const [nik, setNik] = useState("");
+  const [address, setAddress] = useState("");
+
 
   useEffect(() => {
     if (!q.data) return;
