@@ -120,7 +120,10 @@ const upsertInput = z.object({
   phone: z.string().max(30).nullable().optional(),
   job_title: z.string().max(120).nullable().optional(),
   employee_id: z.string().max(50).nullable().optional(),
+  nik: z.string().max(32).nullable().optional(),
+  address: z.string().max(500).nullable().optional(),
   department: z.string().max(120).nullable().optional(),
+
   skills: z.array(z.string().max(60)).optional(),
   base_location_id: z.string().uuid().nullable().optional(),
   status: statusSchema.optional(),
