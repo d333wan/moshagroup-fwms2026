@@ -79,14 +79,22 @@ function TasksListPage() {
         title="Penugasan"
         description="Kelola tugas lapangan, status, dan petugas yang ditugaskan."
         actions={
-          canCreate ? (
-            <Button asChild size="sm">
-              <Link to="/dashboard/tasks/new">
-                <Plus className="h-4 w-4" />
-                Buat Tugas
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/dashboard/tasks/print" target="_blank">
+                <Printer className="h-4 w-4" />
+                Cetak Laporan
               </Link>
             </Button>
-          ) : null
+            {canCreate ? (
+              <Button asChild size="sm">
+                <Link to="/dashboard/tasks/new">
+                  <Plus className="h-4 w-4" />
+                  Buat Tugas
+                </Link>
+              </Button>
+            ) : null}
+          </div>
         }
       />
 
