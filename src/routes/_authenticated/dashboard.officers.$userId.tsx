@@ -226,6 +226,30 @@ function OfficerEditPage() {
                 </div>
               </div>
 
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="nik">No. KTP (NIK)</Label>
+                  <Input
+                    id="nik"
+                    value={nik}
+                    onChange={(e) => setNik(e.target.value)}
+                    placeholder="16 digit NIK"
+                    inputMode="numeric"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="addr">Alamat</Label>
+                  <Input
+                    id="addr"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Alamat sesuai KTP"
+                  />
+                </div>
+              </div>
+
+
+
               <div className="grid gap-2">
                 <Label>Lokasi Utama</Label>
                 <Select value={baseLoc} onValueChange={setBaseLoc}>
