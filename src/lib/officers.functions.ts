@@ -96,8 +96,9 @@ export const getOfficer = createServerFn({ method: "GET" })
     const { data: p, error: pErr } = await supabaseAdmin
       .from("profiles")
       .select(
-        "id, full_name, phone, job_title, employee_id, is_active, avatar_url",
+        "id, full_name, phone, job_title, employee_id, is_active, avatar_url, nik, address",
       )
+
       .eq("id", data.user_id)
       .maybeSingle();
     if (pErr) throw new Error(pErr.message);
