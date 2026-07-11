@@ -42,6 +42,7 @@ function DashboardHome() {
   const tasks = useQuery({
     queryKey: ["tasks", "dashboard"],
     queryFn: () => listTasks({ data: {} }),
+    enabled: !!user,
   });
 
   const rows = tasks.data ?? [];
