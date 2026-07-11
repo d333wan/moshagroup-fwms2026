@@ -76,12 +76,6 @@ function LocationsPage() {
         description="Master data lokasi kerja lapangan."
         actions={
           <div className="flex gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link to="/dashboard/locations/print">
-                <Printer className="h-4 w-4" />
-                Cetak PDF
-              </Link>
-            </Button>
             {canManage ? (
               <Button asChild size="sm">
                 <Link to="/dashboard/locations/$locationId" params={{ locationId: "new" }}>
