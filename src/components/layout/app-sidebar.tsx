@@ -81,6 +81,9 @@ export function AppSidebar() {
     if (n.to === "/dashboard/officers" || n.to === "/dashboard/locations") {
       return canManage;
     }
+    if (n.to === "/dashboard/field-reports/admin") {
+      return canManage;
+    }
     return true;
   });
 
