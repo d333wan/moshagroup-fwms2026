@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import androidPhone from "@/assets/android-phone-mockup.png";
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
+import { COMPANY_ADDRESS } from "@/lib/company";
 
 export const Route = createFileRoute("/")({
   head: () => ({
