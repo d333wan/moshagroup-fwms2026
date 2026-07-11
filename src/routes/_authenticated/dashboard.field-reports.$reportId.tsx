@@ -203,6 +203,49 @@ function FieldReportDetailPage() {
         </CardContent>
       </Card>
 
+      <div className="mt-3 grid gap-3 lg:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Dokumen Petugas (PDF)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AttachmentsPanel
+              scope="report"
+              parentId={reportId}
+              canUpload={canEdit}
+              canDelete={canEdit || isAdminTier}
+              emptyText="Belum ada PDF diunggah."
+            />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Surat Tugas & Lokasi</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <AttachmentsPanel
+              scope="task"
+              parentId={report.task_id}
+              canUpload={false}
+              canDelete={false}
+              title="Dokumen Penugasan"
+              emptyText="Tidak ada."
+            />
+            {task?.location_id ? (
+              <AttachmentsPanel
+                scope="location"
+                parentId={task.location_id}
+                canUpload={false}
+                canDelete={false}
+                title="Dokumen Lokasi"
+                emptyText="Tidak ada."
+              />
+            ) : null}
+          </CardContent>
+        </Card>
+      </div>
+
+
       {isAdminTier && report.status !== "approved" ? (
         <Card className="mt-3">
           <CardHeader className="pb-2">
